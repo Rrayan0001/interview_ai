@@ -11,12 +11,19 @@ from typing import TypedDict, Dict, Any, List
 from backend.api import select_questions as backend_select_questions
 import re
 
+# Load environment variables from .env if available
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # python-dotenv not installed, use system env vars
+
 app = FastAPI()
+# CORS: allow frontend origin from env or default to localhost:1300
+FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "http://localhost:1300")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:1300",
-    ],
+    allow_origins=[FRONTEND_ORIGIN],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -285,6 +292,38 @@ class ReportPayload(BaseModel):
     profile: Dict[str, Any] | None = None
     model: str | None = "llama-3.1-8b-instant"
 
+def _local_report_markdown(payload: ReportPayload) -> str:
+    a = payload.answers
+    t = payload.totals
+    b = payload.behavior
+    lines = []
+    lines.append("Career & Skill Development Report")
+    lines.append("")
+    lines.append("Performance Analysis")
+    lines.append(f"- Total Score: {t.get('overall', 0)} / {t.get('totalQuestions', 0)} ({b.get('accuracy', 0)}%)")
+    lines.append(f"- Aptitude: {t.get('aptitude', 0)}")
+    lines.append(f"- Reasoning: {t.get('reasoning', 0)}")
+    lines.append(f"- Coding: {t.get('coding', 0)}")
+    lines.append(f"- Consistency: {b.get('consistency', 'NA')}")
+    lines.append("")
+    lines.append("Skill Gap Analysis")
+    lines.append("- Focus on improving weak areas identified by incorrect answers.")
+    lines.append("")
+    lines.append("Personalized 6-Week Improvement Plan")
+    lines.append("- Weeks 1–2: Quantitative basics and reasoning drills.")
+    lines.append("- Weeks 3–4: Coding fundamentals and problem sets (arrays/strings/hash).")
+    lines.append("- Weeks 5–6: Mixed timed mocks; maintain an error log and review.")
+    lines.append("")
+    lines.append("Career Guidance")
+    lines.append("- Target roles aligned with strongest section; close core gaps first.")
+    lines.append("")
+    lines.append("Internship Recommendations")
+    lines.append("- Frontend/Full‑stack/QA/Data Analyst Intern depending on section strengths.")
+    lines.append("")
+    lines.append("Final Summary")
+    lines.append("- Keep a steady daily routine; expect visible improvement within 6–8 weeks.")
+    return "\n".join(lines)
+
 @app.post("/generate_report")
 def generate_report(payload: ReportPayload):
     """
@@ -292,7 +331,8 @@ def generate_report(payload: ReportPayload):
     """
     api_key = os.environ.get("GROQ_API_KEY")
     if not api_key:
-        raise HTTPException(status_code=400, detail="GROQ_API_KEY not configured on the server")
+        # Fallback: return a locally generated markdown so the UI never sees a 400
+        return {"report_markdown": _local_report_markdown(payload)}
     try:
         from groq import Groq
     except Exception as e:
