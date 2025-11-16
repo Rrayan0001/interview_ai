@@ -9,9 +9,16 @@ import psycopg
 from psycopg.rows import dict_row
 from pydantic import BaseModel, Field
 from typing import TypedDict, Dict, Any, List, Optional
-from backend.api import select_questions as backend_select_questions
 import re
 import json
+
+# Try to import backend module (optional, may not exist in all deployments)
+try:
+    from backend.api import select_questions as backend_select_questions
+except ImportError:
+    # If backend module doesn't exist, we'll define a fallback
+    backend_select_questions = None
+    print("Warning: backend.api module not found, some features may be unavailable")
 
 # Load environment variables from .env if available
 try:
@@ -227,14 +234,37 @@ def root():
 
 @app.get("/health")
 def health():
-    """Health check endpoint"""
-    db_ok = False
+    """Health check endpoint - must never fail"""
     try:
-        ensure_tables()
-        db_ok = True if get_db_url() else False
-    except Exception:
         db_ok = False
-    return {"status": "ok", "db": "ok" if db_ok else "not_configured"}
+        db_error = None
+        db_url = get_db_url()
+        
+        if db_url:
+            try:
+                ensure_tables()
+                db_ok = True
+            except Exception as e:
+                db_error = str(e)
+                print(f"Health check: DB connection failed: {e}", file=sys.stderr)
+        else:
+            db_error = "DATABASE_URL not configured"
+        
+        return {
+            "status": "ok",
+            "db": "ok" if db_ok else "not_configured",
+            "db_error": db_error if db_error else None
+        }
+    except Exception as e:
+        # Health endpoint must never crash - return error details
+        print(f"Health check crashed: {e}", file=sys.stderr)
+        import traceback
+        traceback.print_exc()
+        return {
+            "status": "error",
+            "error": str(e),
+            "db": "unknown"
+        }
 
 
 # Full resume parsing using Groq LLM (extracts name, email, phone, education, experience, projects, etc.)
@@ -490,6 +520,11 @@ def generate_report_alias(payload: ReportPayload):
 # Proxy to the existing implementation living in backend/api.py so the root server also serves it
 @app.post("/select_questions")
 def select_questions_proxy(payload: dict):
+    if backend_select_questions is None:
+        raise HTTPException(
+            status_code=500, 
+            detail="Question selection module not available. backend.api module not found."
+        )
     return backend_select_questions(payload)
 
 @app.post("/responses")
