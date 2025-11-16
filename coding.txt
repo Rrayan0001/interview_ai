@@ -1,0 +1,624 @@
+BEGINNER (40)
+
+Which DS works on LIFO?
+A) Queue B) Stack C) Array D) Tree
+Answer: B
+
+Time complexity of linear search?
+A) O(1) B) O(log n) C) O(n) D) O(n log n)
+Answer: C
+
+In OS, a process is:
+A) Program in execution
+B) Variable
+C) Function
+D) Memory block
+Answer: A
+
+In OOPS, blueprint of an object:
+A) Object B) Class C) Method D) Module
+Answer: B
+
+Queue operates on:
+A) LIFO B) FIFO C) Random D) Stack rules
+Answer: B
+
+Which of these is not a programming paradigm?
+A) OOP B) Procedural C) Functional D) Numerical
+Answer: D
+
+Binary tree max children per node:
+A) 1 B) 2 C) 3 D) unlimited
+Answer: B
+
+Which is a valid access specifier?
+A) top B) public C) visible D) show
+Answer: B
+
+OS manages:
+A) Memory B) CPU C) I/O devices D) All
+Answer: D
+
+In arrays, indexing starts from:
+A) 0 B) 1 C) 2 D) depends
+Answer: A
+
+OOPS feature that hides data:
+A) Encapsulation B) Inheritance C) Polymorphism D) Overloading
+Answer: A
+
+FIFO scheduling is:
+A) First In First Out
+B) Fast In Fast Out
+C) Fit In Fit Out
+D) None
+Answer: A
+
+What is pointer?
+A) Stores numbers
+B) Stores address
+C) Stores functions
+D) Stores characters
+Answer: B
+
+A linked list stores elements in:
+A) contiguous memory
+B) random memory
+C) sequential fixed blocks
+D) registers only
+Answer: B
+
+“this” keyword refers to:
+A) class
+B) current object
+C) parent object
+D) main object
+Answer: B
+
+OS converts a program into process via:
+A) dispatch
+B) scheduling
+C) loading
+D) swapping
+Answer: C
+
+Which is not a non-primitive DS?
+A) Array B) Stack C) Queue D) Graph
+Answer: A
+
+Inheritance allows:
+A) function reuse
+B) code reuse
+C) data hiding
+D) memory sharing
+Answer: B
+
+Binary search requires:
+A) unsorted list
+B) sorted list
+C) random list
+D) no list
+Answer: B
+
+Deadlock occurs when processes:
+A) share memory
+B) wait forever
+C) terminate early
+D) have no CPU
+Answer: B
+
+Hashing uses:
+A) linked lists
+B) random values
+C) hash function
+D) stacks
+Answer: C
+
+OOPS dynamic binding used in:
+A) overloading
+B) overriding
+C) constructors
+D) static methods
+Answer: B
+
+OS kernel is:
+A) hardware
+B) core of OS
+C) application
+D) network module
+Answer: B
+
+Preorder traversal sequence:
+A) left-root-right
+B) root-left-right
+C) left-right-root
+D) right-root-left
+Answer: B
+
+In C++, new allocates memory on:
+A) stack
+B) heap
+C) CPU cache
+D) registers
+Answer: B
+
+Producer-consumer uses:
+A) mutex
+B) semaphores
+C) both
+D) none
+Answer: C
+
+In DBMS, a row is called:
+A) field
+B) table
+C) record
+D) key
+Answer: C
+
+OS responsible for:
+A) file system
+B) security
+C) memory
+D) all
+Answer: D
+
+A graph with no cycles:
+A) tree
+B) DAG
+C) both
+D) neither
+Answer: C
+
+Recursion ends when:
+A) return
+B) base condition
+C) loop breaks
+D) memory full
+Answer: B
+
+Virtual memory uses:
+A) ROM
+B) RAM + disk
+C) Registers
+D) Cache
+Answer: B
+
+Priority scheduling disadvantage:
+A) starvation
+B) throughput
+C) response time
+D) fairness
+Answer: A
+
+Interface contains:
+A) fields
+B) abstract methods
+C) objects
+D) constructors
+Answer: B
+
+Which is not a sorting algorithm?
+A) Merge sort
+B) Quick sort
+C) Shell sort
+D) Vector sort
+Answer: D
+
+In binary, 8 is:
+A) 1000
+B) 111
+C) 1100
+D) 101
+Answer: A
+
+OS that supports multi-user:
+A) single-user
+B) batch
+C) multitasking
+D) multi-user
+Answer: D
+
+Polymorphism allows:
+A) same function, different forms
+B) many data types
+C) faster code
+D) privacy
+Answer: A
+
+Push in stack:
+A) insert front
+B) insert end
+C) insert top
+D) insert mid
+Answer: C
+
+A full binary tree has:
+A) no constraints
+B) every node has 0 or 2 children
+C) unlimited depth
+D) equal leaves
+Answer: B
+
+Scheduler decides:
+A) memory allocation
+B) process order
+C) file handling
+D) cache speed
+Answer: B
+
+INTERMEDIATE (30)
+
+Time complexity of merge sort:
+A) O(n) B) O(n log n) C) O(n²) D) O(log n)
+Answer: B
+
+Process state which means READY but not running:
+A) Running
+B) Waiting
+C) Ready
+D) Terminated
+Answer: C
+
+A constructor cannot be:
+A) overloaded
+B) private
+C) inherited
+D) public
+Answer: C
+
+Postorder traversal:
+A) root-left-right
+B) left-right-root
+C) right-root-left
+D) leaf-left-root
+Answer: B
+
+Mutex allows:
+A) multiple access
+B) one thread at a time
+C) unlimited locks
+D) none
+Answer: B
+
+Heap is used for:
+A) BFS
+B) Dijkstra
+C) DFS
+D) Prim
+Answer: B
+
+Race condition occurs when:
+A) sequential execution
+B) shared resource access
+C) high CPU load
+D) no I/O
+Answer: B
+
+OOPS feature representing “IS-A”:
+A) Encapsulation
+B) Inheritance
+C) Aggregation
+D) Polymorphism
+Answer: B
+
+A page fault occurs when:
+A) page is in RAM
+B) page is not in RAM
+C) page in cache
+D) page in CPU
+Answer: B
+
+Stack overflow happens when:
+A) pushing too much
+B) popping too much
+C) deleting memory
+D) access invalid address
+Answer: A
+
+Which is NOT stable sorting?
+A) merge sort
+B) quick sort
+C) bubble sort
+D) insertion sort
+Answer: B
+
+OS deadlock requires:
+A) preemption
+B) circular wait
+C) parallelism
+D) paging
+Answer: B
+
+Binary search tree left child contains:
+A) bigger value
+B) smaller value
+C) any value
+D) equal value
+Answer: B
+
+Overloading based on:
+A) name
+B) parameters
+C) access specifier
+D) return type
+Answer: B
+
+In DBMS, primary key:
+A) duplicates allowed
+B) unique + not null
+C) null allowed
+D) none
+Answer: B
+
+Thrashing occurs when:
+A) too many page faults
+B) no page faults
+C) low RAM usage
+D) high CPU
+Answer: A
+
+DFS uses:
+A) queue
+B) stack
+C) heap
+D) priority queue
+Answer: B
+
+Static variable stored in:
+A) heap
+B) stack
+C) static memory
+D) register
+Answer: C
+
+Prevent deadlock by eliminating:
+A) mutual exclusion
+B) circular wait
+C) hold & wait
+D) any one
+Answer: D
+
+Hash table collision solved by:
+A) chaining
+B) recursion
+C) sorting
+D) scheduling
+Answer: A
+
+Linked list access time:
+A) O(1)
+B) O(n)
+C) O(log n)
+D) O(n log n)
+Answer: B
+
+OOPS runtime polymorphism via:
+A) overloading
+B) overriding
+C) templates
+D) static binding
+Answer: B
+
+OS paging divides memory into:
+A) frames
+B) blocks
+C) segments
+D) partitions
+Answer: A
+
+Time slice used in:
+A) FCFS
+B) SJF
+C) Round Robin
+D) Priority
+Answer: C
+
+ADVANCED (30)
+
+Time complexity of quicksort worst case:
+A) O(n) B) O(n log n) C) O(n²) D) O(log n)
+Answer: C
+
+Banker’s algorithm prevents:
+A) paging
+B) deadlock
+C) interrupts
+D) fragmentation
+Answer: B
+
+AVL tree maintains:
+A) height balance
+B) color balance
+C) hash function
+D) parent pointer
+Answer: A
+
+In OS, starvation solved by:
+A) aging
+B) preemption
+C) PCB
+D) swapping
+Answer: A
+
+In C++, delete frees:
+A) heap
+B) stack
+C) static
+D) global
+Answer: A
+
+Which DS for recursion?
+A) heap
+B) stack
+C) array
+D) queue
+Answer: B
+
+C-SCAN is:
+A) CPU scheduling
+B) Disk scheduling
+C) Memory allocation
+D) Page replacement
+Answer: B
+
+Optimal page replacement replaces:
+A) most used
+B) least used
+C) future use highest
+D) future use farthest
+Answer: D
+
+Strict 2PL ensures:
+A) serializability
+B) deadlock
+C) race conditions
+D) none
+Answer: A
+
+B+ tree used in:
+A) OS
+B) DBMS indexing
+C) compilers
+D) CN routing
+Answer: B
+
+Graph cycle detection in directed graph using:
+A) BFS
+B) DFS
+C) stack
+D) queue
+Answer: B
+
+Red-Black tree property:
+A) all leaves black
+B) root black
+C) height fixed
+D) no leaf allowed
+Answer: B
+
+Semaphore “wait” is:
+A) V
+B) P
+C) R
+D) D
+Answer: B
+
+Lamport clock used in:
+A) CPU
+B) distributed systems
+C) OS
+D) DBMS
+Answer: B
+
+RAID 1 means:
+A) striping
+B) mirroring
+C) parity
+D) caching
+Answer: B
+
+Copy-on-write used in:
+A) forking
+B) paging
+C) scheduling
+D) swapping
+Answer: A
+
+Trie used for:
+A) binary operations
+B) prefix search
+C) matrix operations
+D) hashing
+Answer: B
+
+Dijkstra fails when:
+A) graph big
+B) negative edges
+C) cycles exist
+D) weights equal
+Answer: B
+
+Memory fragmentation solved using:
+A) compaction
+B) swapping
+C) paging
+D) scheduling
+Answer: A
+
+OS context switch stores:
+A) PCB
+B) thread ID
+C) memory map
+D) stack frame
+Answer: A
+
+NP-complete means:
+A) polynomial solvable
+B) polynomial verifiable
+C) both
+D) none
+Answer: B
+
+SQL index improves:
+A) search
+B) update
+C) insert
+D) delete
+Answer: A
+
+JVM uses:
+A) compilation
+B) interpretation
+C) both
+D) hardware
+Answer: C
+
+Compiler converts to:
+A) bytecode
+B) machine code
+C) assembly
+D) depends
+Answer: B
+
+Processes communicate using:
+A) IPC
+B) DMA
+C) PCB
+D) ALU
+Answer: A
+
+Belady anomaly happens in:
+A) FIFO page replacement
+B) LRU
+C) LFU
+D) OPT
+Answer: A
+
+Topological sort works only on:
+A) trees
+B) DAG
+C) BST
+D) heaps
+Answer: B
+
+Mutex vs semaphore:
+A) mutex = binary
+B) semaphore = binary
+C) both binary
+D) neither
+Answer: A
+
+Thread-safe code means:
+A) deterministic
+B) safe concurrent
+C) no memory errors
+D) faster
+Answer: B
+
+Bloom filter used for:
+A) exact lookup
+B) probabilistic lookup
+C) indexing
+D) compression
+Answer: B
