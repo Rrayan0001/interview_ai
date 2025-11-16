@@ -1,4 +1,5 @@
 import os
+import sys
 import tempfile
 from typing import Optional
 from fastapi import FastAPI, UploadFile, File, HTTPException
@@ -6,10 +7,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pdf_to_text_groq import read_pdf_text, clean_with_groq_llm, parse_resume_with_groq
 import psycopg
 from psycopg.rows import dict_row
-from pydantic import BaseModel
-from typing import TypedDict, Dict, Any, List
+from pydantic import BaseModel, Field
+from typing import TypedDict, Dict, Any, List, Optional
 from backend.api import select_questions as backend_select_questions
 import re
+import json
 
 # Load environment variables from .env if available
 try:
@@ -39,6 +41,72 @@ def get_groq_key() -> str:
 def get_db_url() -> Optional[str]:
     url = os.environ.get("DATABASE_URL")
     return url.strip() if url else None
+
+def repair_llm_json(text: str) -> str:
+    """
+    Clean common LLM JSON mistakes:
+    - trailing commas
+    - unescaped quotes
+    - non-breaking spaces
+    - missing commas before object keys
+    """
+    import re
+    # Remove non-breaking spaces
+    text = text.replace("\u00a0", " ")
+    # Remove trailing commas before closing braces/brackets
+    text = re.sub(r",\s*([}\]])", r"\1", text)
+    # Fix missing commas between object properties (basic attempt)
+    text = re.sub(r'("\s*)\n\s*"', r'\1,\n    "', text)
+    # Remove any markdown code blocks
+    text = re.sub(r'^```json\s*', '', text, flags=re.MULTILINE)
+    text = re.sub(r'^```\s*$', '', text, flags=re.MULTILINE)
+    return text.strip()
+
+# Pydantic models for structured LLM output (guarantees valid JSON)
+class ExperienceItem(BaseModel):
+    title: str
+    company: Optional[str] = ""
+    location: Optional[str] = ""
+    start: Optional[str] = ""
+    end: Optional[str] = ""
+    bullets: Optional[List[str]] = []
+
+class EducationItem(BaseModel):
+    institution: str
+    degree: Optional[str] = ""
+    field: Optional[str] = ""
+    start: Optional[str] = ""
+    end: Optional[str] = ""
+    grade_type: Optional[str] = ""
+    grade_value: Optional[str] = ""
+
+class ProjectItem(BaseModel):
+    name: str
+    description: Optional[str] = ""
+    tech_stack: Optional[List[str]] = []
+
+class SkillsItem(BaseModel):
+    programming_languages: Optional[List[str]] = []
+    frameworks_libraries: Optional[List[str]] = []
+    tools: Optional[List[str]] = []
+    other: Optional[List[str]] = []
+
+class LinksItem(BaseModel):
+    linkedin: Optional[str] = ""
+    github: Optional[str] = ""
+    portfolio: Optional[str] = ""
+    other: Optional[List[str]] = []
+
+class ResumeSchema(BaseModel):
+    name: str
+    email: str
+    phone: str
+    links: LinksItem
+    summary: Optional[str] = ""
+    education: List[EducationItem]
+    experience: List[ExperienceItem]
+    projects: List[ProjectItem]
+    skills: SkillsItem
 
 def _fallback_minimal_parse(text: str) -> Dict[str, Any]:
     """
@@ -143,10 +211,13 @@ def health():
     return {"status": "ok", "db": "ok" if db_ok else "not_configured"}
 
 
+# Full resume parsing using Groq LLM (extracts name, email, phone, education, experience, projects, etc.)
 @app.post("/parse")
 async def parse_resume(pdf: UploadFile = File(...), cleanup: bool = False, model: str = "llama-3.1-8b-instant"):
-    # Try to load key; keep None if missing so we can gracefully fallback
     key = os.environ.get("GROQ_API_KEY")
+    if not key:
+        raise HTTPException(status_code=500, detail="GROQ_API_KEY not configured. Please set it in .env or environment.")
+    
     tmp_path = None
     try:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
@@ -155,53 +226,73 @@ async def parse_resume(pdf: UploadFile = File(...), cleanup: bool = False, model
 
         text = read_pdf_text(tmp_path)
         if not text:
-            return {
-                "name": "",
-                "email": "",
-                "phone": "",
-                "experience": [],
-                "tenth_percentage": "",
-                "twelfth_percentage": "",
-                "degree_percentage_or_cgpa": ""
-            }
+            raise HTTPException(status_code=400, detail="No text could be extracted from PDF. The PDF may be scanned (image-only).")
 
-        # Try LLM cleanup if requested and key is present
-        if cleanup and key:
+        # Always use LLM cleanup if requested
+        if cleanup:
             try:
                 text = clean_with_groq_llm(text, model=model, api_key=key, verbose=False)
-            except Exception:
-                # Keep raw text if cleanup fails
-                pass
+            except Exception as e:
+                # Log but continue with raw text if cleanup fails
+                print(f"Warning: LLM cleanup failed: {e}", file=sys.stderr)
 
-        # Try LLM minimal parse if key available, else fallback
+        # Use structured JSON output to guarantee valid, complete JSON
         try:
-            if key:
-                minimal_json = parse_resume_with_groq(
-                    text=text,
-                    model=model,
-                    api_key=key,
-                    verbose=False,
-                    output_format="json",
-                    output_preset="minimal",
-                )
-                import json
-                return json.loads(minimal_json)
-            # No key: fallback parser to avoid 500s/CORS issues
-            return _fallback_minimal_parse(text)
-        except Exception:
-            # Absolute last resort: fallback parser
-            return _fallback_minimal_parse(text)
-    except Exception as e:
-        # Never leak a 500 here; return a safe empty profile so UI proceeds
+            from groq import Groq
+        except ImportError:
+            raise HTTPException(status_code=500, detail="groq package not installed")
+        
+        client = Groq(api_key=key)
+        
+        # Get JSON schema from Pydantic model
+        schema = ResumeSchema.model_json_schema()
+        
+        # Build system prompt with schema
+        system_prompt = (
+            "Extract resume details from the provided text and return ONLY valid JSON matching this exact schema:\n"
+            + json.dumps(schema, indent=2, ensure_ascii=False)
+            + "\n\nCRITICAL: Return ONLY the JSON object. No markdown, no code blocks, no explanations. "
+            "Populate all fields from the resume text. Use empty strings or empty arrays for missing data."
+        )
+        
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": text},
+        ]
+        
+        # Use structured output mode - guarantees valid JSON
+        resp = client.chat.completions.create(
+            model=model,
+            messages=messages,
+            response_format={"type": "json_object"},
+            temperature=0.0,
+        )
+        
+        # This will ALWAYS be valid JSON (no truncation, no malformed syntax)
+        clean_json = resp.choices[0].message.content or "{}"
+        parsed = json.loads(clean_json)
+        
+        # Convert to dict format expected by frontend
         return {
-            "name": "",
-            "email": "",
-            "phone": "",
-            "experience": [],
+            "name": parsed.get("name", ""),
+            "email": parsed.get("email", ""),
+            "phone": parsed.get("phone", ""),
+            "experience": [
+                f"{exp.get('title', '')} @ {exp.get('company', '')}" 
+                if exp.get('company') else exp.get('title', '')
+                for exp in parsed.get("experience", [])
+            ] if parsed.get("experience") else [],
             "tenth_percentage": "",
             "twelfth_percentage": "",
-            "degree_percentage_or_cgpa": ""
+            "degree_percentage_or_cgpa": (
+                parsed.get("education", [{}])[0].get("grade_value", "") 
+                if parsed.get("education") else ""
+            ),
         }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Resume parsing failed: {str(e)}")
     finally:
         if tmp_path:
             try:

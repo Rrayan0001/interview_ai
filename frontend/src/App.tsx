@@ -171,8 +171,8 @@ function ParsePage() {
     <div className="container">
       {loading && <LoaderOverlay text="Analyzing your resume…" />}
       <header className="page-head">
-        <h1>Intelligent Interview Setup</h1>
-        <p>Upload your resume. We’ll extract your profile automatically.</p>
+        <h1>AI Interview_Bot</h1>
+        <p>Upload your resume. We'll extract your profile automatically.</p>
       </header>
 
       <form className="card hero" onSubmit={handleParse}>
@@ -219,10 +219,6 @@ function ParsePage() {
           )}
         </section>
       )}
-
-      <footer>
-        <small>Frontend: React + Vite • Backend: FastAPI on {backendUrl}</small>
-      </footer>
     </div>
   );
 }
