@@ -20,12 +20,19 @@ try:
 except ImportError:
     pass  # python-dotenv not installed, use system env vars
 
-app = FastAPI()
+app = FastAPI(title="AI Interview Bot API", version="1.0.0")
+
 # CORS: allow frontend origin from env or default to localhost:1300
+# For production, set FRONTEND_ORIGIN to your deployed frontend URL
 FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "http://localhost:1300")
+# Support multiple origins (comma-separated) or wildcard for dev
+allowed_origins = [origin.strip() for origin in FRONTEND_ORIGIN.split(",")] if "," in FRONTEND_ORIGIN else [FRONTEND_ORIGIN]
+if FRONTEND_ORIGIN == "*":
+    allowed_origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[FRONTEND_ORIGIN],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -200,8 +207,27 @@ def ensure_tables() -> None:
                 );
             """)
 
+@app.get("/")
+def root():
+    """Root endpoint - API information"""
+    return {
+        "name": "AI Interview Bot API",
+        "version": "1.0.0",
+        "status": "running",
+        "endpoints": {
+            "health": "/health",
+            "parse": "/parse",
+            "users": "/users",
+            "select_questions": "/select_questions",
+            "responses": "/responses",
+            "generate_report": "/generate_report",
+            "docs": "/docs"
+        }
+    }
+
 @app.get("/health")
 def health():
+    """Health check endpoint"""
     db_ok = False
     try:
         ensure_tables()
