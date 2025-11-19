@@ -996,3 +996,23 @@ def save_responses(payload: dict):
         return {"saved": True}
     except Exception as e:
         return {"saved": False, "error": str(e)}
+
+@app.get("/{path:path}")
+def catch_all(path: str):
+    """Catch-all route for undefined endpoints"""
+    return {
+        "error": "Endpoint not found",
+        "path": path,
+        "available_endpoints": [
+            "GET /",
+            "GET /health",
+            "POST /parse",
+            "POST /upload-resume",
+            "POST /users",
+            "POST /select_questions",
+            "POST /responses",
+            "POST /evaluate",
+            "POST /generate-report",
+            "POST /generate_report"
+        ]
+    }, 404
