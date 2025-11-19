@@ -32,16 +32,20 @@ except ImportError:
 
 app = FastAPI(title="AI Interview Bot API", version="1.0.0")
 
-# CORS configuration
+# CORS configuration - Explicitly allow Vercel frontend
 _default_dev_origins = ["http://localhost:10000", "http://127.0.0.1:10000", "http://localhost:3000"]
+_production_origins = ["https://interview-ai-one-mocha.vercel.app"]
+
 _frontend_origin_raw = os.getenv("FRONTEND_ORIGIN", "").strip()
 if not _frontend_origin_raw:
-    allowed_origins = _default_dev_origins
+    # Default: allow dev origins + production Vercel URL
+    allowed_origins = _default_dev_origins + _production_origins
 elif _frontend_origin_raw == "*":
     allowed_origins = ["*"]
 else:
+    # Parse custom origins and always include production + dev
     allowed_origins = [origin.strip() for origin in _frontend_origin_raw.split(",") if origin.strip()]
-    # Always include default dev origins for local development
+    allowed_origins.extend(_production_origins)
     allowed_origins.extend(_default_dev_origins)
     # Remove duplicates while preserving order
     seen = set()
