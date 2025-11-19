@@ -276,6 +276,14 @@ function QuestionsPage() {
       setMsg("Responses saved successfully.");
 
       // Include resume data in the request
+      // Include resume data from parsed state or fallback to empty
+      const resumeData = parsed ? {
+        tenth_percentage: parsed.tenth_percentage || "--",
+        twelfth_percentage: parsed.twelfth_percentage || "--",
+        degree_percentage_or_cgpa: parsed.degree_percentage_or_cgpa || "--",
+        experience: parsed.experience || []
+      } : undefined;
+
       const qs = await fetch(`${backendUrl}/select_questions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -285,12 +293,7 @@ function QuestionsPage() {
           reasoning_level: reasoning, 
           coding_level: coding, 
           counts: { aptitude: 10, reasoning: 10, coding: 10 },
-          resume: data ? {
-            tenth_percentage: data.tenth_percentage,
-            twelfth_percentage: data.twelfth_percentage,
-            degree_percentage_or_cgpa: data.degree_percentage_or_cgpa,
-            experience: data.experience || []
-          } : undefined
+          resume: resumeData
         }),
       });
       if (!qs.ok) throw new Error(await qs.text());
