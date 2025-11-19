@@ -54,8 +54,8 @@ const getBackendUrl = () => {
 
 const backendUrl = getBackendUrl();
 
-// Debug log (remove in production if needed)
-if (typeof window !== "undefined") {
+// Debug log (only in development)
+if (typeof window !== "undefined" && import.meta.env.DEV) {
   console.log("Backend URL:", backendUrl);
   console.log("VITE_BACKEND_URL env:", import.meta.env.VITE_BACKEND_URL);
 }
@@ -275,10 +275,23 @@ function QuestionsPage() {
       if (!res.ok) throw new Error(await res.text());
       setMsg("Responses saved successfully.");
 
+      // Include resume data in the request
       const qs = await fetch(`${backendUrl}/select_questions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: userId, aptitude_level: aptitude, reasoning_level: reasoning, coding_level: coding, counts: { aptitude: 10, reasoning: 10, coding: 10 } }),
+        body: JSON.stringify({ 
+          user_id: userId, 
+          aptitude_level: aptitude, 
+          reasoning_level: reasoning, 
+          coding_level: coding, 
+          counts: { aptitude: 10, reasoning: 10, coding: 10 },
+          resume: data ? {
+            tenth_percentage: data.tenth_percentage,
+            twelfth_percentage: data.twelfth_percentage,
+            degree_percentage_or_cgpa: data.degree_percentage_or_cgpa,
+            experience: data.experience || []
+          } : undefined
+        }),
       });
       if (!qs.ok) throw new Error(await qs.text());
       const payload = (await qs.json()) as QuestionsPayload;

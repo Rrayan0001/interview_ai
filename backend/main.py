@@ -150,13 +150,15 @@ def _fallback_minimal_parse(text: str) -> Dict[str, Any]:
                 tenth = m.group(1) if m.groups() else m.group(0)
                 break
         
-        # Extract 12th percentage - Widen search to include "Class 12", "XII", "Intermediate"
+        # Extract 12th percentage - Widen search to include "Class 12", "XII", "Intermediate", "Pre-University College", "(PUC)"
         twelfth_patterns = [
-            r"(?:12th|2\s*PU|2PU|PUC|HSC|II\s*PU|Class\s*12|XII|Intermediate)[:\s\-]+(\d{1,2}(?:\.\d+)?\s*%)",
-            r"(?:12th|2\s*PU|2PU|PUC|HSC|II\s*PU|Class\s*12|XII|Intermediate).*?(\d{1,2}(?:\.\d+)?\s*%)",
-            r"(\d{1,2}(?:\.\d+)?\s*%)(?=.*(?:12th|2\s*PU|2PU|PUC|HSC|II\s*PU|Class\s*12|XII|Intermediate))",
+            r"(?:12th|2\s*PU|2PU|PUC|HSC|II\s*PU|Class\s*12|XII|Intermediate|Pre[- ]?University|Pre[- ]?Univ)[:\s\-]+(\d{1,2}(?:\.\d+)?\s*%)",
+            r"(?:12th|2\s*PU|2PU|PUC|HSC|II\s*PU|Class\s*12|XII|Intermediate|Pre[- ]?University|Pre[- ]?Univ).*?(\d{1,2}(?:\.\d+)?\s*%)",
+            r"(\d{1,2}(?:\.\d+)?\s*%)(?=.*(?:12th|2\s*PU|2PU|PUC|HSC|II\s*PU|Class\s*12|XII|Intermediate|Pre[- ]?University|Pre[- ]?Univ))",
             # Look for number without % if explicitly labeled
-            r"(?:12th|2\s*PU|2PU|PUC|HSC|II\s*PU|Class\s*12|XII|Intermediate).*?(\d+(?:\.\d+)?)\s*%",
+            r"(?:12th|2\s*PU|2PU|PUC|HSC|II\s*PU|Class\s*12|XII|Intermediate|Pre[- ]?University|Pre[- ]?Univ).*?(\d+(?:\.\d+)?)\s*%",
+            # Pattern for "(PUC)" or "Pre-University College"
+            r"(?:\(PUC\)|Pre[- ]?University\s+College).*?(\d{1,2}(?:\.\d+)?\s*%)",
         ]
         for pattern in twelfth_patterns:
             m = re.search(pattern, text, re.IGNORECASE | re.DOTALL)
@@ -168,8 +170,8 @@ def _fallback_minimal_parse(text: str) -> Dict[str, Any]:
         
         # Context-aware window search for 12th if regex failed
         if not twelfth:
-            # Find keywords and look for percentages in +/- 50 chars
-            keywords = ["12th", "puc", "hsc", "xii", "intermediate", "class 12", "2 pu"]
+            # Find keywords and look for percentages in +/- 60 chars
+            keywords = ["12th", "puc", "hsc", "xii", "intermediate", "class 12", "2 pu", "pre-university", "pre university", "pre-univ", "(puc)"]
             for keyword in keywords:
                 for m in re.finditer(re.escape(keyword), text, re.IGNORECASE):
                     start = max(0, m.start() - 60)
@@ -199,7 +201,7 @@ def _fallback_minimal_parse(text: str) -> Dict[str, Any]:
                 # Classify based on nearby text
                 if any(term in context for term in ["10th", "sslc", "ssc", "class 10", "x "]) and not tenth:
                     tenth = percent
-                elif any(term in context for term in ["12th", "2 pu", "2pu", "puc", "hsc", "class 12", "xii", "intermediate"]) and not twelfth:
+                elif any(term in context for term in ["12th", "2 pu", "2pu", "puc", "hsc", "class 12", "xii", "intermediate", "pre-university", "pre university", "(puc)"]) and not twelfth:
                     twelfth = percent
                 else:
                     all_percents.append((percent, context))
@@ -229,14 +231,15 @@ def _fallback_minimal_parse(text: str) -> Dict[str, Any]:
             name = ln
             break
     
+    # Use "--" for missing data
     return {
-        "name": name,
-        "email": email,
-        "phone": phone,
+        "name": name or "--",
+        "email": email or "--",
+        "phone": phone or "--",
         "experience": [],
-        "tenth_percentage": tenth,
-        "twelfth_percentage": twelfth,
-        "degree_percentage_or_cgpa": degree,
+        "tenth_percentage": tenth or "--",
+        "twelfth_percentage": twelfth or "--",
+        "degree_percentage_or_cgpa": degree or "--",
     }
 
 # Endpoints
@@ -315,7 +318,7 @@ async def upload_resume(file: UploadFile = File(...), cleanup: bool = False, mod
                 "Populate all fields from the resume text. Use empty strings or empty arrays for missing data.\n\n"
                 "CRITICAL EDUCATION EXTRACTION RULES:\n"
                 "- For 10th/SSLC/SSC: Look ONLY for '10th', 'SSLC', 'SSC', 'Class 10', or 'X'. DO NOT confuse with 12th.\n"
-                "- For 12th/PUC/HSC: Look ONLY for '12th', '2 PU', '2pu', '2 pu', 'PUC', 'HSC', 'Class 12', 'II PUC', 'XII', or 'Intermediate'. "
+                "- For 12th/PUC/HSC: Look ONLY for '12th', '2 PU', '2pu', '2 pu', 'PUC', 'HSC', 'Class 12', 'II PUC', 'XII', 'Intermediate', 'Pre-University College', 'Pre-University', or '(PUC)'. "
                 "These are DIFFERENT from 10th - do not mix them up.\n"
                 "- When creating education entries, clearly label each one. If you see '2 PU' or 'PUC', that is 12th, NOT 10th.\n"
                 "- If a percentage appears near '2 PU', 'PUC', or 'HSC', it belongs to 12th, not 10th.\n"
@@ -364,7 +367,8 @@ async def upload_resume(file: UploadFile = File(...), cleanup: bool = False, mod
                 # Check for 12th - must be explicit, avoid matching "10th"
                 # Only assign if we haven't found it yet and it's clearly 12th
                 if not twelfth_pct and (any(term in institution_lower or term in degree_lower or term in field_lower 
-                       for term in ["12th", "2 pu", "2pu", "puc", "hsc", "ii pu", "class 12", "xii", "intermediate"]) and
+                       for term in ["12th", "2 pu", "2pu", "puc", "hsc", "ii pu", "class 12", "xii", "intermediate", 
+                                   "pre-university", "pre university", "pre-univ", "(puc)"]) and
                     "10th" not in institution_lower and "10th" not in degree_lower and
                     "sslc" not in institution_lower and "ssc" not in institution_lower):
                     twelfth_pct = grade_value
@@ -420,18 +424,19 @@ async def upload_resume(file: UploadFile = File(...), cleanup: bool = False, mod
                             degree_cgpa = grade_value
                             break
             
+            # Use "--" for missing data
             return {
-                "name": parsed.get("name", ""),
-                "email": parsed.get("email", ""),
-                "phone": parsed.get("phone", ""),
+                "name": parsed.get("name", "") or "--",
+                "email": parsed.get("email", "") or "--",
+                "phone": parsed.get("phone", "") or "--",
                 "experience": [
                     f"{exp.get('title', '')} @ {exp.get('company', '')}" 
                     if exp.get('company') else exp.get('title', '')
                     for exp in parsed.get("experience", [])
                 ] if parsed.get("experience") else [],
-                "tenth_percentage": tenth_pct,
-                "twelfth_percentage": twelfth_pct,
-                "degree_percentage_or_cgpa": degree_cgpa,
+                "tenth_percentage": tenth_pct or "--",
+                "twelfth_percentage": twelfth_pct or "--",
+                "degree_percentage_or_cgpa": degree_cgpa or "--",
             }
         except ImportError:
             fallback_payload["note"] = "groq package not installed; returned minimal parse."
@@ -890,17 +895,42 @@ def select_questions(payload: dict):
                 with conn.cursor(row_factory=dict_row) as cur:
                     cur.execute("select * from user_profiles where id=%s limit 1", (user_id,))
                     row = cur.fetchone()
-                    if not row:
-                        raise HTTPException(status_code=404, detail="user not found")
-                    resume_row = row
+                    if row:
+                        resume_row = row
+                    elif isinstance(direct_resume, dict):
+                        # If user not found but resume data provided, use it
+                        resume_row = direct_resume
+                    else:
+                        # If no user and no resume, create minimal resume from available data
+                        resume_row = {
+                            "tenth_percentage": payload.get("tenth_percentage", ""),
+                            "twelfth_percentage": payload.get("twelfth_percentage", ""),
+                            "degree_percentage_or_cgpa": payload.get("degree_percentage_or_cgpa", ""),
+                            "experience": payload.get("experience", []),
+                        }
         except HTTPException:
             raise
         except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+            # If DB fails, fall back to resume data or minimal data
+            if isinstance(direct_resume, dict):
+                resume_row = direct_resume
+            else:
+                resume_row = {
+                    "tenth_percentage": payload.get("tenth_percentage", ""),
+                    "twelfth_percentage": payload.get("twelfth_percentage", ""),
+                    "degree_percentage_or_cgpa": payload.get("degree_percentage_or_cgpa", ""),
+                    "experience": payload.get("experience", []),
+                }
     elif isinstance(direct_resume, dict):
         resume_row = direct_resume
     else:
-        raise HTTPException(status_code=400, detail="Provide user_id or resume data")
+        # No user_id, no resume, no DB - use minimal data from payload
+        resume_row = {
+            "tenth_percentage": payload.get("tenth_percentage", ""),
+            "twelfth_percentage": payload.get("twelfth_percentage", ""),
+            "degree_percentage_or_cgpa": payload.get("degree_percentage_or_cgpa", ""),
+            "experience": payload.get("experience", []),
+        }
 
     # Compute resume strength and adjust levels
     strength = compute_resume_strength(resume_row)
