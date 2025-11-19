@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+const API_URL = (import.meta.env.VITE_BACKEND_URL as string | undefined) || "http://localhost:8000";
 
 export const evaluateCandidate = async (data: any) => {
   const res = await fetch(`${API_URL}/evaluate`, {

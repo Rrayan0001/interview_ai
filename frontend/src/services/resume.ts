@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+const API_URL = (import.meta.env.VITE_BACKEND_URL as string | undefined) || "http://localhost:8000";
 
 export const uploadResume = async (file: File, cleanup: boolean = true) => {
   const form = new FormData();
