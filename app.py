@@ -59,6 +59,6 @@ if uploaded_file is not None:
             pass
 
 st.markdown("---")
-st.caption("Backend: FastAPI on port 8000. Frontend: Streamlit on port 1300.")
+st.caption("Backend: FastAPI on port 8000. Frontend: Vite dev server on port 10000.")
 
 

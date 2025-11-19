@@ -29,13 +29,19 @@ except ImportError:
 
 app = FastAPI(title="AI Interview Bot API", version="1.0.0")
 
-# CORS: allow frontend origin from env or default to localhost:1300
-# For production, set FRONTEND_ORIGIN to your deployed frontend URL
-FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "http://localhost:1300")
-# Support multiple origins (comma-separated) or wildcard for dev
-allowed_origins = [origin.strip() for origin in FRONTEND_ORIGIN.split(",")] if "," in FRONTEND_ORIGIN else [FRONTEND_ORIGIN]
-if FRONTEND_ORIGIN == "*":
+# CORS: allow frontend origin(s).
+# - Local dev defaults to http://localhost:10000 / http://127.0.0.1:10000 (vite dev server).
+# - Production should set FRONTEND_ORIGIN to the deployed frontend URL (or comma-separated list).
+_default_dev_origins = ["http://localhost:10000", "http://127.0.0.1:10000"]
+_frontend_origin_raw = os.getenv("FRONTEND_ORIGIN", "").strip()
+if not _frontend_origin_raw:
+    allowed_origins = _default_dev_origins
+elif _frontend_origin_raw == "*":
     allowed_origins = ["*"]
+else:
+    allowed_origins = [origin.strip() for origin in _frontend_origin_raw.split(",") if origin.strip()]
+    if not allowed_origins:
+        allowed_origins = _default_dev_origins
 
 app.add_middleware(
     CORSMiddleware,
@@ -134,24 +140,50 @@ def _fallback_minimal_parse(text: str) -> Dict[str, Any]:
     degree = ""
     name = ""
     try:
-        m_email = re.search(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}", text)
+        m_email = re.search(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", text)
         if m_email:
             email = m_email.group(0)
     except Exception:
         pass
     try:
-        m_phone = re.search(r"(?:\\+\\d{1,3}[\\s-]?)?\\d{10}", re.sub(r"\\D", "", text))
+        m_phone = re.search(r"(?:\+\d{1,3}[\s-]?)?\d{10}", text)
         if m_phone:
             phone = m_phone.group(0)
     except Exception:
         pass
     try:
-        # naive pick first percentage-looking numbers
-        percents = re.findall(r"(\\d{1,2}(?:\\.\\d+)?%)", text)
-        if percents:
-            tenth = percents[0]
-        if len(percents) > 1:
-            twelfth = percents[1]
+        # Extract 10th percentage - look for "10th", "10", "SSLC", "SSC" patterns
+        tenth_patterns = [
+            r"10th[:\s]+(\d{1,2}(?:\.\d+)?%)",
+            r"10[:\s]+(\d{1,2}(?:\.\d+)?%)",
+            r"(?:SSLC|SSC)[:\s]+(\d{1,2}(?:\.\d+)?%)",
+            r"(\d{1,2}(?:\.\d+)?%)(?=.*10th|.*SSLC|.*SSC)",
+        ]
+        for pattern in tenth_patterns:
+            m = re.search(pattern, text, re.IGNORECASE)
+            if m:
+                tenth = m.group(1) if m.groups() else m.group(0)
+                break
+        
+        # Extract 12th percentage - look for "12th", "2 PU", "2pu", "2 pu", "PUC", "HSC" patterns
+        twelfth_patterns = [
+            r"(?:12th|2\s*PU|2PU|PUC|HSC)[:\s]+(\d{1,2}(?:\.\d+)?%)",
+            r"(\d{1,2}(?:\.\d+)?%)(?=.*(?:12th|2\s*PU|2PU|PUC|HSC))",
+            r"(?:12th|2\s*PU|2PU|PUC|HSC).*?(\d{1,2}(?:\.\d+)?%)",
+        ]
+        for pattern in twelfth_patterns:
+            m = re.search(pattern, text, re.IGNORECASE)
+            if m:
+                twelfth = m.group(1) if m.groups() else m.group(0)
+                break
+        
+        # Fallback: if no specific pattern found, try naive approach
+        if not tenth or not twelfth:
+            percents = re.findall(r"(\d{1,2}(?:\.\d+)?%)", text)
+            if percents and not tenth:
+                tenth = percents[0]
+            if len(percents) > 1 and not twelfth:
+                twelfth = percents[1]
     except Exception:
         pass
     try:
@@ -270,10 +302,12 @@ def health():
 # Full resume parsing using Groq LLM (extracts name, email, phone, education, experience, projects, etc.)
 @app.post("/parse")
 async def parse_resume(pdf: UploadFile = File(...), cleanup: bool = False, model: str = "llama-3.1-8b-instant"):
-    key = os.environ.get("GROQ_API_KEY")
-    if not key:
-        raise HTTPException(status_code=500, detail="GROQ_API_KEY not configured. Please set it in .env or environment.")
-    
+    """
+    Primary resume parsing endpoint.
+    - If GROQ_API_KEY is available, we use the LLM-powered structured parser.
+    - If the key is missing or Groq call fails, we gracefully fall back to a lightweight regex parser
+      so the UI never receives a 500 / CORS error.
+    """
     tmp_path = None
     try:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
@@ -283,6 +317,13 @@ async def parse_resume(pdf: UploadFile = File(...), cleanup: bool = False, model
         text = read_pdf_text(tmp_path)
         if not text:
             raise HTTPException(status_code=400, detail="No text could be extracted from PDF. The PDF may be scanned (image-only).")
+
+        fallback_payload = _fallback_minimal_parse(text)
+
+        key = os.environ.get("GROQ_API_KEY")
+        if not key:
+            fallback_payload["note"] = "GROQ_API_KEY not configured; returned minimal parse."
+            return fallback_payload
 
         # Always use LLM cleanup if requested
         if cleanup:
@@ -296,7 +337,8 @@ async def parse_resume(pdf: UploadFile = File(...), cleanup: bool = False, model
         try:
             from groq import Groq
         except ImportError:
-            raise HTTPException(status_code=500, detail="groq package not installed")
+            fallback_payload["note"] = "groq package not installed; returned minimal parse."
+            return fallback_payload
         
         client = Groq(api_key=key)
         
@@ -308,7 +350,9 @@ async def parse_resume(pdf: UploadFile = File(...), cleanup: bool = False, model
             "Extract resume details from the provided text and return ONLY valid JSON matching this exact schema:\n"
             + json.dumps(schema, indent=2, ensure_ascii=False)
             + "\n\nCRITICAL: Return ONLY the JSON object. No markdown, no code blocks, no explanations. "
-            "Populate all fields from the resume text. Use empty strings or empty arrays for missing data."
+            "Populate all fields from the resume text. Use empty strings or empty arrays for missing data.\n\n"
+            "IMPORTANT: For 12th percentage, look for variations like '12th', '2 PU', '2pu', '2 pu', 'PUC', or 'HSC'. "
+            "For 10th percentage, look for '10th', 'SSLC', or 'SSC'. Extract the percentage values associated with these labels."
         )
         
         messages = [
@@ -328,6 +372,41 @@ async def parse_resume(pdf: UploadFile = File(...), cleanup: bool = False, model
         clean_json = resp.choices[0].message.content or "{}"
         parsed = json.loads(clean_json)
         
+        # Extract education data for percentages
+        education_list = parsed.get("education", [])
+        tenth_pct = ""
+        twelfth_pct = ""
+        degree_cgpa = ""
+        
+        # Look for 10th and 12th in education entries
+        for edu in education_list:
+            institution_lower = (edu.get("institution", "") or "").lower()
+            degree_lower = (edu.get("degree", "") or "").lower()
+            field_lower = (edu.get("field", "") or "").lower()
+            grade_value = edu.get("grade_value", "") or ""
+            
+            # Check if this is 10th/SSLC/SSC
+            if any(term in institution_lower or term in degree_lower or term in field_lower 
+                   for term in ["10th", "sslc", "ssc", "10"]):
+                tenth_pct = grade_value
+            
+            # Check if this is 12th/2 PU/PUC/HSC
+            if any(term in institution_lower or term in degree_lower or term in field_lower 
+                   for term in ["12th", "2 pu", "2pu", "puc", "hsc", "12"]):
+                twelfth_pct = grade_value
+        
+        # If not found in education, try to extract from text using regex
+        if not tenth_pct or not twelfth_pct:
+            fallback = _fallback_minimal_parse(text)
+            if not tenth_pct:
+                tenth_pct = fallback.get("tenth_percentage", "")
+            if not twelfth_pct:
+                twelfth_pct = fallback.get("twelfth_percentage", "")
+        
+        # Get degree CGPA from first education entry (usually degree)
+        if education_list:
+            degree_cgpa = education_list[0].get("grade_value", "") or ""
+        
         # Convert to dict format expected by frontend
         return {
             "name": parsed.get("name", ""),
@@ -338,17 +417,24 @@ async def parse_resume(pdf: UploadFile = File(...), cleanup: bool = False, model
                 if exp.get('company') else exp.get('title', '')
                 for exp in parsed.get("experience", [])
             ] if parsed.get("experience") else [],
-            "tenth_percentage": "",
-            "twelfth_percentage": "",
-            "degree_percentage_or_cgpa": (
-                parsed.get("education", [{}])[0].get("grade_value", "") 
-                if parsed.get("education") else ""
-            ),
+            "tenth_percentage": tenth_pct,
+            "twelfth_percentage": twelfth_pct,
+            "degree_percentage_or_cgpa": degree_cgpa,
         }
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Resume parsing failed: {str(e)}")
+        fallback_payload = {"note": f"Unexpected failure: {e}"}
+        try:
+            # Provide whatever we can from fallback parser if text already extracted
+            if "text" in locals() and text:
+                fallback_payload.update(_fallback_minimal_parse(text))
+            else:
+                fallback_payload.update({"name": "", "email": "", "phone": "", "experience": [], "tenth_percentage": "", "twelfth_percentage": "", "degree_percentage_or_cgpa": ""})
+        except Exception:
+            pass
+        print(f"parse_resume fallback due to exception: {e}", file=sys.stderr)
+        return fallback_payload
     finally:
         if tmp_path:
             try:
