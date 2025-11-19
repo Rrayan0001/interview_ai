@@ -1,11 +1,11 @@
 """
-Streamlit wrapper for FastAPI backend.
-This file allows Streamlit Cloud to serve the FastAPI backend.
+Streamlit wrapper for FastAPI backend on Streamlit Cloud.
+⚠️ IMPORTANT: Streamlit Cloud cannot serve FastAPI REST endpoints.
+This is just a status page. For production, deploy backend on Railway/Render.
 """
 
 import os
 import sys
-import subprocess
 import streamlit as st
 
 # Add backend directory to path
@@ -19,28 +19,15 @@ st.set_page_config(
 )
 
 st.title("🤖 AI Interview Bot - Backend API")
-st.info("""
-This is the FastAPI backend server.
-The API endpoints are available at the same URL with the following paths:
-- `/health` - Health check
-- `/parse` - Parse resume PDF
-- `/users` - Create/get user
-- `/select_questions` - Get questions
-- `/generate_report` - Generate report
+st.error("""
+⚠️ **Streamlit Cloud Limitation**: Streamlit Cloud cannot serve FastAPI REST endpoints.
+
+**Your FastAPI endpoints will NOT work on Streamlit Cloud.**
+
+For production, deploy your backend on:
+- **Railway** (Recommended): https://railway.app  
+- **Render**: https://render.com
 """)
-
-# Check if we're in Streamlit Cloud
-if os.getenv("STREAMLIT_SERVER_PORT"):
-    st.success("✅ Backend is running on Streamlit Cloud")
-    st.code("""
-API Base URL: https://{your-app-name}.streamlit.app
-
-Example endpoints:
-- https://{your-app-name}.streamlit.app/health
-- https://{your-app-name}.streamlit.app/parse
-    """)
-else:
-    st.warning("Running in local mode")
 
 # Display environment status
 st.sidebar.header("Environment Status")
@@ -52,13 +39,13 @@ st.sidebar.write("**GROQ_API_KEY:**", "✅ Set" if groq_key else "❌ Missing")
 st.sidebar.write("**DATABASE_URL:**", "✅ Set" if db_url else "⚠️ Optional")
 st.sidebar.write("**FRONTEND_ORIGIN:**", "✅ Set" if frontend_origin else "⚠️ Not set")
 
-# Import and expose FastAPI app
+# Try to import FastAPI app (for validation)
 try:
     from backend.main import app
-    st.success("✅ FastAPI app loaded successfully")
+    st.success("✅ FastAPI app can be imported")
     
-    # Display available endpoints
-    st.subheader("Available Endpoints")
+    # Display available endpoints (for reference)
+    st.subheader("API Endpoints (when deployed on Railway/Render)")
     endpoints = [
         ("GET", "/", "API info"),
         ("GET", "/health", "Health check"),
@@ -68,19 +55,26 @@ try:
         ("POST", "/select_questions", "Select questions"),
         ("POST", "/responses", "Save responses"),
         ("POST", "/generate-report", "Generate report"),
-        ("POST", "/generate_report", "Generate report (alias)"),
     ]
     
     for method, path, desc in endpoints:
         st.code(f"{method} {path} - {desc}")
         
 except Exception as e:
-    st.error(f"❌ Failed to load FastAPI app: {str(e)}")
+    st.error(f"❌ Failed to import FastAPI app: {str(e)}")
     st.exception(e)
 
-# Note about Streamlit Cloud limitations
-st.warning("""
-⚠️ **Important Note**: Streamlit Cloud is not ideal for FastAPI backends.
-For production, consider migrating to Railway or Render for better performance.
+# Migration guide
+st.subheader("🚀 Quick Migration to Railway")
+st.markdown("""
+1. Go to https://railway.app
+2. **New Project** → **Deploy from GitHub**
+3. Select: `Rrayan0001/interview_ai`
+4. **Root Directory**: `backend`
+5. Add environment variables:
+   - `GROQ_API_KEY`
+   - `DATABASE_URL`
+   - `FRONTEND_ORIGIN=https://interview-ai-one-mocha.vercel.app`
+6. Copy the Railway URL
+7. Update Vercel's `VITE_BACKEND_URL` to the Railway URL
 """)
-
