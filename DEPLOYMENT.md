@@ -1,136 +1,152 @@
-# Deployment Guide
+# Complete Deployment Guide
 
-## Backend Deployment (FastAPI)
+## Architecture
 
-### Required Environment Variables
-
-Set these in your deployment platform:
-
-```
-GROQ_API_KEY=your_groq_api_key_here
-DATABASE_URL=postgresql://user:password@host/db?sslmode=require
-FRONTEND_ORIGIN=https://your-frontend-domain.vercel.app
-```
-
-### Deployment Platforms
-
-#### Render / Railway / Fly.io
-
-1. Connect your GitHub repository
-2. Set environment variables above
-3. Build command: `pip install -r requirements.txt`
-4. Start command: `uvicorn api:app --host 0.0.0.0 --port $PORT`
-
-The `Procfile` is already configured for these platforms.
-
-#### Vercel / Netlify Functions
-
-Not recommended for FastAPI. Use Render/Railway instead.
-
-### Verify Deployment
-
-1. Check root endpoint: `https://your-backend-url.com/`
-2. Check health: `https://your-backend-url.com/health`
-3. Check docs: `https://your-backend-url.com/docs`
+- **Frontend**: React/Vite (Vercel)
+- **Backend**: FastAPI (Railway/Render)
+- **Communication**: REST API via `fetch`
 
 ---
 
-## Frontend Deployment (React/Vite)
+## 🚀 Local Development
 
-### Required Environment Variables
-
-Create `.env.production` or set in your deployment platform:
-
-```
-VITE_BACKEND_URL=https://your-backend-url.com
-```
-
-### Deployment Platforms
-
-#### Vercel
-
-1. Connect GitHub repository
-2. Root directory: `frontend`
-3. Build command: `npm run build`
-4. Output directory: `dist`
-5. Add environment variable: `VITE_BACKEND_URL`
-
-#### Netlify
-
-1. Connect GitHub repository
-2. Base directory: `frontend`
-3. Build command: `npm run build`
-4. Publish directory: `frontend/dist`
-5. Add environment variable: `VITE_BACKEND_URL`
-
-### Verify Deployment
-
-1. Open your frontend URL
-2. Check browser console for API calls
-3. Test resume upload flow
-
----
-
-## Troubleshooting 404 Errors
-
-### If you see "404: NOT_FOUND"
-
-1. **Check backend is running:**
-   - Visit `https://your-backend-url.com/health`
-   - Should return `{"status":"ok","db":"ok"}`
-
-2. **Check frontend backend URL:**
-   - Ensure `VITE_BACKEND_URL` is set correctly
-   - No trailing slash: `https://api.example.com` (not `https://api.example.com/`)
-
-3. **Check CORS:**
-   - Set `FRONTEND_ORIGIN` in backend to your frontend URL
-   - Example: `FRONTEND_ORIGIN=https://your-app.vercel.app`
-
-4. **Check endpoint exists:**
-   - Visit `https://your-backend-url.com/docs` to see all available endpoints
-   - Verify the endpoint you're calling exists
-
-5. **Check network tab:**
-   - Open browser DevTools → Network
-   - See what URL the frontend is actually calling
-   - Verify it matches your backend URL
-
----
-
-## Common Issues
-
-### CORS Errors
-
-- Set `FRONTEND_ORIGIN` in backend to your exact frontend URL
-- Include protocol: `https://your-app.vercel.app` (not just `your-app.vercel.app`)
-
-### Environment Variables Not Loading
-
-- Restart your deployment after adding env vars
-- Check variable names are exact (case-sensitive)
-- For Vite: Variables must start with `VITE_` to be exposed to frontend
-
-### Database Connection Failed
-
-- Verify `DATABASE_URL` is correct
-- Check database allows connections from your deployment platform
-- Ensure SSL is enabled: `?sslmode=require`
-
----
-
-## Quick Test
-
-After deployment, test these endpoints:
+### Backend Setup
 
 ```bash
-# Backend root
-curl https://your-backend-url.com/
-
-# Health check
-curl https://your-backend-url.com/health
-
-# API docs
-open https://your-backend-url.com/docs
+cd backend
+pip install -r requirements.txt
+uvicorn main:app --reload
 ```
 
+Backend runs at: `http://localhost:8000`
+
+### Frontend Setup
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend runs at: `http://localhost:10000` (or port shown in terminal)
+
+### Environment Variables (Local)
+
+Create `frontend/.env.local`:
+```
+VITE_BACKEND_URL=http://localhost:8000
+```
+
+---
+
+## 📦 Production Deployment
+
+### Step 1: Deploy Backend (Railway/Render)
+
+#### Option A: Railway (Recommended)
+
+1. Go to [railway.app](https://railway.app)
+2. **New Project** → **Deploy from GitHub**
+3. Select your repository
+4. **Settings** → **Root Directory**: Set to `backend`
+5. **Variables** → Add:
+   ```
+   GROQ_API_KEY=your_groq_key
+   DATABASE_URL=your_neon_postgres_url
+   FRONTEND_ORIGIN=https://your-frontend.vercel.app
+   ```
+6. Railway auto-detects FastAPI and deploys
+7. Copy your production URL (e.g., `https://api-production.up.railway.app`)
+
+#### Option B: Render
+
+1. Go to [render.com](https://render.com)
+2. **New** → **Web Service**
+3. Connect GitHub repository
+4. **Root Directory**: `backend`
+5. **Build Command**: `pip install -r requirements.txt`
+6. **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+7. Add environment variables (same as Railway)
+8. Deploy and copy URL
+
+---
+
+### Step 2: Deploy Frontend (Vercel)
+
+1. Go to [vercel.com](https://vercel.com)
+2. **New Project** → Import from GitHub
+3. Select your repository
+4. **Root Directory**: `frontend`
+5. **Framework Preset**: Vite
+6. **Environment Variables** → Add:
+   ```
+   VITE_BACKEND_URL=https://your-backend-url.railway.app
+   ```
+7. **Deploy**
+
+---
+
+## ✅ Verification
+
+### Test Backend
+
+```bash
+curl https://your-backend-url.railway.app/health
+```
+
+Should return: `{"status":"ok","db":"ok"}`
+
+### Test Frontend
+
+1. Visit your Vercel URL
+2. Upload a resume PDF
+3. Verify it parses correctly
+
+---
+
+## 🔧 Troubleshooting
+
+### Backend Issues
+
+- **Import errors**: Ensure `pdf_to_text_groq.py` is in the parent directory (root)
+- **Missing dependencies**: Check `backend/requirements.txt` includes all packages
+- **CORS errors**: Set `FRONTEND_ORIGIN` to your exact frontend URL
+
+### Frontend Issues
+
+- **API not connecting**: Verify `VITE_BACKEND_URL` is set correctly in Vercel
+- **Build errors**: Check Node.js version (Vite requires Node 18+)
+
+---
+
+## 📝 Environment Variables Summary
+
+### Backend (Railway/Render)
+- `GROQ_API_KEY` - Required for resume parsing
+- `DATABASE_URL` - Optional, for user persistence
+- `FRONTEND_ORIGIN` - Your Vercel frontend URL
+
+### Frontend (Vercel)
+- `VITE_BACKEND_URL` - Your Railway/Render backend URL
+
+---
+
+## 🎯 Quick Start Checklist
+
+- [ ] Backend deployed on Railway/Render
+- [ ] Backend environment variables set
+- [ ] Backend health check returns `{"status":"ok"}`
+- [ ] Frontend deployed on Vercel
+- [ ] Frontend `VITE_BACKEND_URL` set to backend URL
+- [ ] Test resume upload works
+- [ ] Test report generation works
+
+---
+
+## 📚 API Endpoints
+
+- `GET /` - API info
+- `GET /health` - Health check
+- `POST /upload-resume` - Parse resume PDF
+- `POST /evaluate` - Evaluate candidate
+- `POST /generate-report` - Generate career report
