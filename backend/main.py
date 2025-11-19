@@ -3,6 +3,8 @@ import sys
 import tempfile
 import json
 import re
+import random
+import zipfile
 from typing import Optional, Dict, Any, List
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -141,23 +143,49 @@ def _fallback_minimal_parse(text: str) -> Dict[str, Any]:
                 tenth = m.group(1) if m.groups() else m.group(0)
                 break
         
-        # Extract 12th percentage - look for "2 PU", "2pu", "2 pu", "PUC", "HSC"
+        # Extract 12th percentage - look for "2 PU", "2pu", "2 pu", "PUC", "HSC", "12th"
+        # IMPORTANT: Check for 12th patterns with more flexible matching
         twelfth_patterns = [
-            r"(?:12th|2\s*PU|2PU|PUC|HSC)[:\s]+(\d{1,2}(?:\.\d+)?%)",
-            r"(\d{1,2}(?:\.\d+)?%)(?=.*(?:12th|2\s*PU|2PU|PUC|HSC))",
+            r"(?:12th|2\s*PU|2PU|PUC|HSC|II\s*PU)[:\s\-]+(\d{1,2}(?:\.\d+)?\s*%)",
+            r"(?:12th|2\s*PU|2PU|PUC|HSC|II\s*PU).*?(\d{1,2}(?:\.\d+)?\s*%)",
+            r"(\d{1,2}(?:\.\d+)?\s*%)(?=.*(?:12th|2\s*PU|2PU|PUC|HSC|II\s*PU))",
+            r"(?:12th|2\s*PU|2PU|PUC|HSC).*?(\d+(?:\.\d+)?)\s*%",
         ]
         for pattern in twelfth_patterns:
-            m = re.search(pattern, text, re.IGNORECASE)
+            m = re.search(pattern, text, re.IGNORECASE | re.DOTALL)
             if m:
-                twelfth = m.group(1) if m.groups() else m.group(0)
+                twelfth = m.group(1).strip() if m.groups() else m.group(0).strip()
+                if not twelfth.endswith("%"):
+                    twelfth += "%"
                 break
         
+        # Only use fallback if specific patterns didn't match
+        # This prevents confusing 10th and 12th percentages
         if not tenth or not twelfth:
-            percents = re.findall(r"(\d{1,2}(?:\.\d+)?%)", text)
-            if percents and not tenth:
-                tenth = percents[0]
-            if len(percents) > 1 and not twelfth:
-                twelfth = percents[1]
+            # Find all percentages with context
+            all_percents = []
+            for match in re.finditer(r"(\d{1,2}(?:\.\d+)?%)", text):
+                percent = match.group(1)
+                start = max(0, match.start() - 50)
+                end = min(len(text), match.end() + 50)
+                context = text[start:end].lower()
+                
+                # Classify based on nearby text
+                if any(term in context for term in ["10th", "sslc", "ssc"]) and not tenth:
+                    tenth = percent
+                elif any(term in context for term in ["12th", "2 pu", "2pu", "puc", "hsc"]) and not twelfth:
+                    twelfth = percent
+                else:
+                    all_percents.append((percent, context))
+            
+            # If still missing, use position-based assignment (10th usually comes before 12th)
+            if not tenth and all_percents:
+                tenth = all_percents[0][0]
+            if not twelfth and len(all_percents) > 1:
+                twelfth = all_percents[1][0]
+            elif not twelfth and len(all_percents) == 1 and not tenth:
+                # Only one percentage found, assume it's 10th
+                tenth = all_percents[0][0]
     except Exception:
         pass
     
@@ -210,6 +238,11 @@ def health():
         "db": "ok" if db_ok else "not_configured"
     }
 
+@app.post("/parse")
+async def parse_resume(pdf: UploadFile = File(...), cleanup: bool = False, model: str = "llama-3.1-8b-instant"):
+    """Alias for /upload-resume - maintains backward compatibility"""
+    return await upload_resume(pdf, cleanup, model)
+
 @app.post("/upload-resume")
 async def upload_resume(file: UploadFile = File(...), cleanup: bool = False, model: str = "llama-3.1-8b-instant"):
     """
@@ -254,8 +287,14 @@ async def upload_resume(file: UploadFile = File(...), cleanup: bool = False, mod
                 + json.dumps(schema, indent=2, ensure_ascii=False)
                 + "\n\nCRITICAL: Return ONLY the JSON object. No markdown, no code blocks, no explanations. "
                 "Populate all fields from the resume text. Use empty strings or empty arrays for missing data.\n\n"
-                "IMPORTANT: For 12th percentage, look for variations like '12th', '2 PU', '2pu', '2 pu', 'PUC', or 'HSC'. "
-                "For 10th percentage, look for '10th', 'SSLC', or 'SSC'. Extract the percentage values associated with these labels."
+                "CRITICAL EDUCATION EXTRACTION RULES:\n"
+                "- For 10th/SSLC/SSC: Look ONLY for '10th', 'SSLC', 'SSC', or 'Class 10'. DO NOT confuse with 12th.\n"
+                "- For 12th/PUC/HSC: Look ONLY for '12th', '2 PU', '2pu', '2 pu', 'PUC', 'HSC', 'Class 12', or 'II PUC'. "
+                "These are DIFFERENT from 10th - do not mix them up.\n"
+                "- When creating education entries, clearly label each one. If you see '2 PU' or 'PUC', that is 12th, NOT 10th.\n"
+                "- If a percentage appears near '2 PU', 'PUC', or 'HSC', it belongs to 12th, not 10th.\n"
+                "- If a percentage appears near 'SSLC', 'SSC', or '10th', it belongs to 10th, not 12th.\n"
+                "- Be very careful to distinguish between these two - they are completely different education levels."
             )
             
             messages = [
@@ -273,36 +312,87 @@ async def upload_resume(file: UploadFile = File(...), cleanup: bool = False, mod
             clean_json = resp.choices[0].message.content or "{}"
             parsed = json.loads(clean_json)
             
-            # Extract education data for percentages
+            # Extract education data for percentages - be more specific to avoid confusion
             education_list = parsed.get("education", [])
             tenth_pct = ""
             twelfth_pct = ""
             degree_cgpa = ""
             
+            # First pass: Look for explicit 10th/SSLC/SSC labels
+            # Process in order: 10th first, then 12th, to avoid confusion
             for edu in education_list:
                 institution_lower = (edu.get("institution", "") or "").lower()
                 degree_lower = (edu.get("degree", "") or "").lower()
                 field_lower = (edu.get("field", "") or "").lower()
                 grade_value = edu.get("grade_value", "") or ""
                 
-                if any(term in institution_lower or term in degree_lower or term in field_lower 
-                       for term in ["10th", "sslc", "ssc", "10"]):
+                # Check for 10th - must be explicit, avoid matching "12th" or "2 pu"
+                # Only assign if we haven't found it yet and it's clearly 10th
+                if not tenth_pct and (any(term in institution_lower or term in degree_lower or term in field_lower 
+                       for term in ["10th", "sslc", "ssc", "class 10"]) and 
+                    "12th" not in institution_lower and "12th" not in degree_lower and 
+                    "2 pu" not in institution_lower and "2pu" not in institution_lower and
+                    "puc" not in institution_lower and "hsc" not in institution_lower):
                     tenth_pct = grade_value
                 
-                if any(term in institution_lower or term in degree_lower or term in field_lower 
-                       for term in ["12th", "2 pu", "2pu", "puc", "hsc", "12"]):
+                # Check for 12th - must be explicit, avoid matching "10th"
+                # Only assign if we haven't found it yet and it's clearly 12th
+                if not twelfth_pct and (any(term in institution_lower or term in degree_lower or term in field_lower 
+                       for term in ["12th", "2 pu", "2pu", "puc", "hsc", "ii pu", "class 12"]) and
+                    "10th" not in institution_lower and "10th" not in degree_lower and
+                    "sslc" not in institution_lower and "ssc" not in institution_lower):
                     twelfth_pct = grade_value
             
-            # Fallback to regex if not found
+            # Fallback to regex if not found - use improved extraction
             if not tenth_pct or not twelfth_pct:
                 fallback = _fallback_minimal_parse(text)
+                # Only use fallback if LLM didn't find it
                 if not tenth_pct:
                     tenth_pct = fallback.get("tenth_percentage", "")
                 if not twelfth_pct:
                     twelfth_pct = fallback.get("twelfth_percentage", "")
             
-            if education_list:
-                degree_cgpa = education_list[0].get("grade_value", "") or ""
+            # Get degree CGPA - look for highest education (usually last or degree-level)
+            # Skip entries that are clearly 10th/12th
+            for edu in reversed(education_list):  # Check from end (usually degree is last)
+                institution_lower = (edu.get("institution", "") or "").lower()
+                degree_lower = (edu.get("degree", "") or "").lower()
+                field_lower = (edu.get("field", "") or "").lower()
+                grade_value = edu.get("grade_value", "") or ""
+                
+                # Skip if it's clearly 10th or 12th
+                if any(term in institution_lower or term in degree_lower or term in field_lower 
+                       for term in ["10th", "12th", "sslc", "ssc", "2 pu", "2pu", "puc", "hsc", "class 10", "class 12"]):
+                    continue
+                
+                # Check if grade_value looks like CGPA (has "/" or is a decimal between 0-10)
+                if grade_value:
+                    # If it contains "/" it's likely CGPA format
+                    if "/" in grade_value:
+                        degree_cgpa = grade_value
+                        break
+                    # If it's a number, check if it's in CGPA range (0-10)
+                    try:
+                        val = float(grade_value.replace("%", ""))
+                        if 0 <= val <= 10:  # Likely CGPA
+                            degree_cgpa = grade_value
+                            break
+                    except:
+                        pass
+            
+            # If still no degree, use first education entry that's not 10th/12th
+            if not degree_cgpa and education_list:
+                for edu in education_list:
+                    institution_lower = (edu.get("institution", "") or "").lower()
+                    degree_lower = (edu.get("degree", "") or "").lower()
+                    field_lower = (edu.get("field", "") or "").lower()
+                    grade_value = edu.get("grade_value", "") or ""
+                    
+                    if not any(term in institution_lower or term in degree_lower or term in field_lower 
+                               for term in ["10th", "12th", "sslc", "ssc", "2 pu", "2pu", "puc", "hsc"]):
+                        if grade_value:
+                            degree_cgpa = grade_value
+                            break
             
             return {
                 "name": parsed.get("name", ""),
@@ -430,3 +520,423 @@ async def generate_report(payload: dict):
             "report_markdown": f"# Report Generation Error\n\n{str(e)}",
             "error": str(e)
         }
+
+@app.post("/generate_report")
+async def generate_report_underscore(payload: dict):
+    """Alias for /generate-report with underscore (frontend compatibility)"""
+    return await generate_report(payload)
+
+@app.post("/users")
+def create_or_get_user(payload: dict):
+    """
+    Create or get user profile.
+    Body: { name, email, phone, tenth_percentage, twelfth_percentage, degree_percentage_or_cgpa, experience }
+    Returns: { user_id, persisted }
+    """
+    name = (payload.get("name") or "").strip()
+    email = (payload.get("email") or "").strip()
+    phone = (payload.get("phone") or "").strip()
+    if not name:
+        raise HTTPException(status_code=400, detail="name is required")
+    
+    tenth = payload.get("tenth_percentage") or ""
+    twelfth = payload.get("twelfth_percentage") or ""
+    degree = payload.get("degree_percentage_or_cgpa") or ""
+    exp = payload.get("experience") or []
+    
+    db_url = get_db_url()
+    if not db_url:
+        return {"user_id": "00000000-0000-0000-0000-000000000000", "persisted": False}
+    
+    try:
+        import psycopg
+        from psycopg.rows import dict_row
+        
+        # Ensure tables exist
+        with psycopg.connect(db_url, autocommit=True) as conn:
+            with conn.cursor() as cur:
+                try:
+                    cur.execute("create extension if not exists pgcrypto;")
+                except Exception:
+                    pass
+                cur.execute("""
+                    create table if not exists user_profiles (
+                      id uuid primary key default gen_random_uuid(),
+                      name text not null,
+                      email text,
+                      phone text,
+                      tenth_percentage text,
+                      twelfth_percentage text,
+                      degree_percentage_or_cgpa text,
+                      experience jsonb,
+                      aptitude_level text,
+                      reasoning_level text,
+                      coding_level text,
+                      created_at timestamptz not null default now()
+                    );
+                """)
+        
+        with psycopg.connect(db_url, autocommit=True) as conn:
+            with conn.cursor(row_factory=dict_row) as cur:
+                if email:
+                    cur.execute("select id from user_profiles where email=%s limit 1", (email,))
+                    row = cur.fetchone()
+                    if row:
+                        cur.execute(
+                            """
+                            update user_profiles
+                            set name=%s, phone=%s, tenth_percentage=%s, twelfth_percentage=%s,
+                                degree_percentage_or_cgpa=%s, experience=%s
+                            where id=%s
+                            """,
+                            (name, phone or None, tenth, twelfth, degree, psycopg.types.json.Json(exp), row["id"]),
+                        )
+                        return {"user_id": str(row["id"]), "persisted": True}
+                
+                cur.execute(
+                    """
+                    insert into user_profiles(name,email,phone,tenth_percentage,twelfth_percentage,degree_percentage_or_cgpa,experience)
+                    values(%s,%s,%s,%s,%s,%s,%s) returning id
+                    """,
+                    (name, email or None, phone or None, tenth, twelfth, degree, psycopg.types.json.Json(exp)),
+                )
+                user_id = cur.fetchone()["id"]
+                return {"user_id": str(user_id), "persisted": True}
+    except Exception as e:
+        return {"user_id": "00000000-0000-0000-0000-000000000000", "persisted": False, "db_error": str(e)}
+
+def parse_percent(s: str) -> Optional[float]:
+    """Parse percentage string to float"""
+    try:
+        if not s:
+            return None
+        t = s.strip().replace("%", "")
+        return float(t)
+    except Exception:
+        return None
+
+def parse_cgpa(s: str) -> Optional[float]:
+    """Parse CGPA string to float"""
+    if not s:
+        return None
+    try:
+        main = s.split("/")[0].strip()
+        return float(main)
+    except Exception:
+        return None
+
+def compute_resume_strength(row: Dict[str, Any]) -> str:
+    """Compute resume strength based on academic scores and experience"""
+    cgpa = parse_cgpa(row.get("degree_percentage_or_cgpa") or "")
+    twelfth = parse_percent(row.get("twelfth_percentage") or "")
+    tenth = parse_percent(row.get("tenth_percentage") or "")
+    exp_list = row.get("experience") or []
+    exp_len = len(exp_list) if isinstance(exp_list, list) else 0
+    score = 0
+    
+    if cgpa is not None:
+        if cgpa >= 9.0: score += 4
+        elif cgpa >= 8.0: score += 3
+        elif cgpa >= 7.0: score += 2
+        else: score += 1
+    if twelfth is not None:
+        if twelfth >= 95: score += 4
+        elif twelfth >= 90: score += 3
+        elif twelfth >= 80: score += 2
+        else: score += 1
+    if tenth is not None:
+        if tenth >= 95: score += 3
+        elif tenth >= 85: score += 2
+        else: score += 1
+    if exp_len >= 3: score += 4
+    elif exp_len == 2: score += 3
+    elif exp_len == 1: score += 2
+    else: score += 1
+
+    if score >= 12:
+        return "EXTREMELY_STRONG"
+    if score >= 9:
+        return "STRONG"
+    if score >= 6:
+        return "AVERAGE"
+    return "WEAK"
+
+def final_level_by_matrix(resume_strength: str, user_level: str) -> str:
+    """Determine final question level based on resume strength and user's self-assessed level"""
+    u = user_level.lower()
+    if resume_strength == "WEAK":
+        if u == "beginner": return "beginner"
+        if u == "intermediate": return "beginner"
+        if u == "advance": return "intermediate"
+    elif resume_strength == "AVERAGE":
+        if u == "beginner": return "beginner"
+        if u == "intermediate": return "intermediate"
+        if u == "advance": return "advance"
+    elif resume_strength == "STRONG":
+        if u == "beginner": return "beginner"
+        if u == "intermediate": return "advance"
+        if u == "advance": return "advance"
+    elif resume_strength == "EXTREMELY_STRONG":
+        if u == "beginner": return "beginner"
+        if u == "intermediate": return "advance"
+        if u == "advance": return "advance"
+    return u
+
+def load_questions_bundle(bundle_path: str) -> Dict[str, List[Dict[str, Any]]]:
+    """Load questions from zip file or txt files"""
+    result: Dict[str, List[Dict[str, Any]]] = {"aptitude": [], "reasoning": [], "coding": []}
+    
+    # Try zip file first
+    if os.path.isfile(bundle_path):
+        try:
+            with zipfile.ZipFile(bundle_path, "r") as zf:
+                for name in zf.namelist():
+                    lower = name.lower()
+                    if not lower.endswith(".json"):
+                        continue
+                    with zf.open(name) as f:
+                        try:
+                            data = json.loads(f.read().decode("utf-8"))
+                            if "aptitude" in lower:
+                                result["aptitude"].extend(data)
+                            elif "reason" in lower:
+                                result["reasoning"].extend(data)
+                            elif "coding" in lower or "general" in lower or "dsa" in lower or "oops" in lower or "os" in lower:
+                                result["coding"].extend(data)
+                        except Exception:
+                            continue
+            if any(result.values()):
+                return result
+        except Exception:
+            pass
+    
+    # Fallback: parse txt files
+    def parse_txt(path: str) -> List[Dict[str, Any]]:
+        if not os.path.isfile(path):
+            return []
+        with open(path, "r", encoding="utf-8") as f:
+            content = f.read()
+        lines = [ln.rstrip() for ln in content.splitlines()]
+        out: List[Dict[str, Any]] = []
+        cur: List[str] = []
+        cur_level = "beginner"
+        
+        def flush(seg: List[str], level: str):
+            txt = "\n".join(seg).strip()
+            if not txt:
+                return
+            m_ans = re.search(r"Answer:\s*([A-Da-d])", txt)
+            if not m_ans:
+                return
+            ans_key = m_ans.group(1).upper()
+            head = re.split(r"Answer:\s*[A-Da-d]", txt)[0].strip()
+            head = re.sub(r"^(Q?\d+\.\s*)", "", head)
+            m_opts = re.search(r"A\)\s*(.*?)\s+B\)\s*(.*?)\s+C\)\s*(.*?)\s+D\)\s*(.*)", head, flags=re.S)
+            question = head
+            options: List[str] = []
+            if m_opts:
+                question = head[:m_opts.start()].strip().rstrip(":").strip()
+                options = [m_opts.group(i).strip() for i in range(1,5)]
+            else:
+                question_line, *rest = head.splitlines()
+                question = question_line.strip().rstrip(":").strip()
+                for opt_key in ["A", "B", "C", "D"]:
+                    mm = re.search(rf"^{opt_key}[\).\]]\s*(.*)$", head, flags=re.M)
+                    if mm:
+                        options.append(mm.group(1).strip())
+            correct = ""
+            if options:
+                idx = {"A":0,"B":1,"C":2,"D":3}.get(ans_key, None)
+                if idx is not None and 0 <= idx < len(options):
+                    correct = options[idx]
+            out.append({
+                "question": question,
+                "options": options,
+                "correct_answer": correct,
+                "explanation": "",
+                "level": level,
+            })
+        
+        for ln in lines:
+            if not ln.strip():
+                continue
+            low = ln.lower()
+            if "beginner" in low:
+                cur_level = "beginner"
+                continue
+            if "intermediate" in low:
+                cur_level = "intermediate"
+                continue
+            if "advanced" in low:
+                cur_level = "advance"
+                continue
+            cur.append(ln)
+            if ln.strip().startswith("Answer:"):
+                flush(cur, cur_level)
+                cur = []
+        if cur:
+            flush(cur, cur_level)
+        
+        # Fallback parser if nothing found
+        if not out:
+            blocks = re.split(r"(?=^(?:Q?\d+\.))", content, flags=re.M)
+            for blk in blocks:
+                blk = blk.strip()
+                if not blk:
+                    continue
+                m_q = re.match(r"^(?:Q?\d+\.\s*)?(.*)", blk, flags=re.M)
+                if not m_q:
+                    continue
+                question = m_q.group(1).strip()
+                opts = []
+                for opt_key in ["A", "B", "C", "D"]:
+                    m_opt = re.search(rf"^{opt_key}[\).\]]\s*(.*)$", blk, flags=re.M)
+                    if m_opt:
+                        opts.append(m_opt.group(1).strip())
+                m_ca = re.search(r"Answer:\s*([A-D])", blk, flags=re.M)
+                correct = ""
+                if m_ca:
+                    key = m_ca.group(1).upper()
+                    idx = {"A":0,"B":1,"C":2,"D":3}.get(key, None)
+                    if idx is not None and idx < len(opts):
+                        correct = opts[idx]
+                out.append({
+                    "question": question,
+                    "options": opts,
+                    "correct_answer": correct,
+                    "explanation": "",
+                })
+            for i, q in enumerate(out, start=1):
+                q["level"] = "beginner" if i <= 40 else ("intermediate" if i <= 70 else "advance")
+        return out
+    
+    # Load from project root or questions_bundle directory
+    root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "questions_bundle"))
+    
+    result["aptitude"] = parse_txt(os.path.join(root, "aptitude.txt")) or parse_txt(os.path.join(base_dir, "aptitude.txt"))
+    result["reasoning"] = parse_txt(os.path.join(root, "reasoning.txt")) or parse_txt(os.path.join(base_dir, "reasoning.txt"))
+    result["coding"] = parse_txt(os.path.join(root, "coding.txt")) or parse_txt(os.path.join(base_dir, "coding.txt")) or parse_txt(os.path.join(base_dir, "general.txt"))
+    
+    if not any(result.values()):
+        raise RuntimeError("No questions found in zip or txt banks")
+    return result
+
+def pick_by_level(items: List[Dict[str, Any]], level: str, count: int) -> List[Dict[str, Any]]:
+    """Pick questions of a specific level"""
+    pool = [q for q in items if str(q.get("level", "")).lower() == level.lower()]
+    if len(pool) < count:
+        chosen = pool[:]
+        remaining = [q for q in items if q not in chosen]
+        random.shuffle(remaining)
+        chosen.extend(remaining[: max(0, count - len(chosen))])
+        return chosen[:count]
+    random.shuffle(pool)
+    return pool[:count]
+
+@app.post("/select_questions")
+def select_questions(payload: dict):
+    """
+    Select questions based on user level and resume strength.
+    Body: { user_id?, aptitude_level, reasoning_level, coding_level, counts?: { aptitude?, reasoning?, coding? } }
+    """
+    user_id = payload.get("user_id")
+    levels = {
+        "aptitude": payload.get("aptitude_level", "beginner"),
+        "reasoning": payload.get("reasoning_level", "beginner"),
+        "coding": payload.get("coding_level", "beginner"),
+    }
+    counts = payload.get("counts") or {}
+    num_apt = int(counts.get("aptitude", 10))
+    num_rea = int(counts.get("reasoning", 10))
+    num_cod = int(counts.get("coding", 10))
+
+    # Fetch resume data
+    resume_row: Dict[str, Any] = {}
+    direct_resume = payload.get("resume")
+    db_url = get_db_url()
+    
+    if user_id and db_url:
+        try:
+            import psycopg
+            from psycopg.rows import dict_row
+            with psycopg.connect(db_url, autocommit=True) as conn:
+                with conn.cursor(row_factory=dict_row) as cur:
+                    cur.execute("select * from user_profiles where id=%s limit 1", (user_id,))
+                    row = cur.fetchone()
+                    if not row:
+                        raise HTTPException(status_code=404, detail="user not found")
+                    resume_row = row
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+    elif isinstance(direct_resume, dict):
+        resume_row = direct_resume
+    else:
+        raise HTTPException(status_code=400, detail="Provide user_id or resume data")
+
+    # Compute resume strength and adjust levels
+    strength = compute_resume_strength(resume_row)
+    final_levels = {
+        "aptitude": final_level_by_matrix(strength, levels["aptitude"]),
+        "reasoning": final_level_by_matrix(strength, levels["reasoning"]),
+        "coding": final_level_by_matrix(strength, levels["coding"]),
+    }
+
+    # Load questions
+    bundle_path = os.path.join(os.path.dirname(__file__), "..", "questions_bundle.zip")
+    bundle_path = os.path.abspath(bundle_path)
+    try:
+        bank = load_questions_bundle(bundle_path)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load questions: {str(e)}")
+
+    return {
+        "aptitude": {
+            "final_level": final_levels["aptitude"],
+            "questions": pick_by_level(bank["aptitude"], final_levels["aptitude"], num_apt),
+        },
+        "reasoning": {
+            "final_level": final_levels["reasoning"],
+            "questions": pick_by_level(bank["reasoning"], final_levels["reasoning"], num_rea),
+        },
+        "coding": {
+            "final_level": final_levels["coding"],
+            "questions": pick_by_level(bank["coding"], final_levels["coding"], num_cod),
+        },
+    }
+
+@app.post("/responses")
+def save_responses(payload: dict):
+    """
+    Save test responses.
+    Body: { user_id, aptitude_level, reasoning_level, coding_level }
+    """
+    user_id = payload.get("user_id")
+    aptitude = payload.get("aptitude_level")
+    reasoning = payload.get("reasoning_level")
+    coding = payload.get("coding_level")
+    
+    if not (user_id and aptitude and reasoning and coding):
+        raise HTTPException(status_code=400, detail="missing fields")
+    
+    db_url = get_db_url()
+    if not db_url:
+        return {"saved": False}
+    
+    try:
+        import psycopg
+        with psycopg.connect(db_url, autocommit=True) as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    update user_profiles
+                    set aptitude_level=%s, reasoning_level=%s, coding_level=%s
+                    where id=%s
+                    """,
+                    (aptitude, reasoning, coding, user_id),
+                )
+        return {"saved": True}
+    except Exception as e:
+        return {"saved": False, "error": str(e)}
