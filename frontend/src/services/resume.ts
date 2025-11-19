@@ -2,7 +2,11 @@
 const getApiUrl = () => {
   const envUrl = import.meta.env.VITE_BACKEND_URL as string | undefined;
   if (import.meta.env.PROD) {
-    return envUrl || "https://web-production-dad96.up.railway.app";
+    // Force Railway if env var is missing or points to localhost
+    if (!envUrl || envUrl.includes("localhost")) {
+      return "https://web-production-dad96.up.railway.app";
+    }
+    return envUrl;
   }
   return envUrl || "http://localhost:8000";
 };

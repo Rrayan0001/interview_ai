@@ -39,10 +39,15 @@ type ReportPayload = {
 // Get backend URL from environment variable, with fallback
 const getBackendUrl = () => {
   const envUrl = import.meta.env.VITE_BACKEND_URL as string | undefined;
-  // For production, always use Railway URL
+  
+  // Force Railway URL in production, ignoring localhost if set by mistake
   if (import.meta.env.PROD) {
-    return envUrl || "https://web-production-dad96.up.railway.app";
+    if (!envUrl || envUrl.includes("localhost")) {
+      return "https://web-production-dad96.up.railway.app";
+    }
+    return envUrl;
   }
+  
   // For development, use env var or localhost
   return envUrl || "http://localhost:8000";
 };
