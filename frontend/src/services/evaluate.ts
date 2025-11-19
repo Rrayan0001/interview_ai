@@ -1,4 +1,13 @@
-const API_URL = (import.meta.env.VITE_BACKEND_URL as string | undefined) || "http://localhost:8000";
+// Get backend URL - use Railway in production, localhost in dev
+const getApiUrl = () => {
+  const envUrl = import.meta.env.VITE_BACKEND_URL as string | undefined;
+  if (import.meta.env.PROD) {
+    return envUrl || "https://web-production-dad96.up.railway.app";
+  }
+  return envUrl || "http://localhost:8000";
+};
+
+const API_URL = getApiUrl();
 
 export const evaluateCandidate = async (data: any) => {
   const res = await fetch(`${API_URL}/evaluate`, {

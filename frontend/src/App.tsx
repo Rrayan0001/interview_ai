@@ -36,7 +36,24 @@ type ReportPayload = {
   profile?: Parsed | null;
 };
 
-const backendUrl = (import.meta.env.VITE_BACKEND_URL as string | undefined) || "http://localhost:8000";
+// Get backend URL from environment variable, with fallback
+const getBackendUrl = () => {
+  const envUrl = import.meta.env.VITE_BACKEND_URL as string | undefined;
+  // For production, always use Railway URL
+  if (import.meta.env.PROD) {
+    return envUrl || "https://web-production-dad96.up.railway.app";
+  }
+  // For development, use env var or localhost
+  return envUrl || "http://localhost:8000";
+};
+
+const backendUrl = getBackendUrl();
+
+// Debug log (remove in production if needed)
+if (typeof window !== "undefined") {
+  console.log("Backend URL:", backendUrl);
+  console.log("VITE_BACKEND_URL env:", import.meta.env.VITE_BACKEND_URL);
+}
 
 // -------------------- Small UI Components --------------------
 
