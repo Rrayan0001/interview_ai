@@ -41,8 +41,11 @@ elif _frontend_origin_raw == "*":
     allowed_origins = ["*"]
 else:
     allowed_origins = [origin.strip() for origin in _frontend_origin_raw.split(",") if origin.strip()]
-    if not allowed_origins:
-        allowed_origins = _default_dev_origins
+    # Always include default dev origins for local development
+    allowed_origins.extend(_default_dev_origins)
+    # Remove duplicates while preserving order
+    seen = set()
+    allowed_origins = [x for x in allowed_origins if not (x in seen or seen.add(x))]
 
 app.add_middleware(
     CORSMiddleware,

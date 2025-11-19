@@ -36,7 +36,7 @@ type ReportPayload = {
   profile?: Parsed | null;
 };
 
-const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || "http://localhost:8000";
+const backendUrl = (import.meta.env.VITE_BACKEND_URL as string | undefined) || "http://localhost:8000";
 
 // -------------------- Small UI Components --------------------
 
