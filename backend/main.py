@@ -453,8 +453,8 @@ async def upload_resume(file: UploadFile = File(...), cleanup: bool = False, mod
                 fallback_payload.update(_fallback_minimal_parse(text))
             else:
                 fallback_payload.update({
-                    "name": "", "email": "", "phone": "", "experience": [],
-                    "tenth_percentage": "", "twelfth_percentage": "", "degree_percentage_or_cgpa": ""
+                    "name": "--", "email": "--", "phone": "--", "experience": [],
+                    "tenth_percentage": "--", "twelfth_percentage": "--", "degree_percentage_or_cgpa": "--"
                 })
         except Exception:
             pass
