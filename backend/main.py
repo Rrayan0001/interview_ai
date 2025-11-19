@@ -150,13 +150,13 @@ def _fallback_minimal_parse(text: str) -> Dict[str, Any]:
                 tenth = m.group(1) if m.groups() else m.group(0)
                 break
         
-        # Extract 12th percentage - look for "2 PU", "2pu", "2 pu", "PUC", "HSC", "12th"
-        # IMPORTANT: Check for 12th patterns with more flexible matching
+        # Extract 12th percentage - Widen search to include "Class 12", "XII", "Intermediate"
         twelfth_patterns = [
-            r"(?:12th|2\s*PU|2PU|PUC|HSC|II\s*PU)[:\s\-]+(\d{1,2}(?:\.\d+)?\s*%)",
-            r"(?:12th|2\s*PU|2PU|PUC|HSC|II\s*PU).*?(\d{1,2}(?:\.\d+)?\s*%)",
-            r"(\d{1,2}(?:\.\d+)?\s*%)(?=.*(?:12th|2\s*PU|2PU|PUC|HSC|II\s*PU))",
-            r"(?:12th|2\s*PU|2PU|PUC|HSC).*?(\d+(?:\.\d+)?)\s*%",
+            r"(?:12th|2\s*PU|2PU|PUC|HSC|II\s*PU|Class\s*12|XII|Intermediate)[:\s\-]+(\d{1,2}(?:\.\d+)?\s*%)",
+            r"(?:12th|2\s*PU|2PU|PUC|HSC|II\s*PU|Class\s*12|XII|Intermediate).*?(\d{1,2}(?:\.\d+)?\s*%)",
+            r"(\d{1,2}(?:\.\d+)?\s*%)(?=.*(?:12th|2\s*PU|2PU|PUC|HSC|II\s*PU|Class\s*12|XII|Intermediate))",
+            # Look for number without % if explicitly labeled
+            r"(?:12th|2\s*PU|2PU|PUC|HSC|II\s*PU|Class\s*12|XII|Intermediate).*?(\d+(?:\.\d+)?)\s*%",
         ]
         for pattern in twelfth_patterns:
             m = re.search(pattern, text, re.IGNORECASE | re.DOTALL)
@@ -166,6 +166,25 @@ def _fallback_minimal_parse(text: str) -> Dict[str, Any]:
                     twelfth += "%"
                 break
         
+        # Context-aware window search for 12th if regex failed
+        if not twelfth:
+            # Find keywords and look for percentages in +/- 50 chars
+            keywords = ["12th", "puc", "hsc", "xii", "intermediate", "class 12", "2 pu"]
+            for keyword in keywords:
+                for m in re.finditer(re.escape(keyword), text, re.IGNORECASE):
+                    start = max(0, m.start() - 60)
+                    end = min(len(text), m.end() + 60)
+                    window = text[start:end]
+                    # Find percentage in this window
+                    p_match = re.search(r"(\d{1,2}(?:\.\d+)?\s*%)", window)
+                    if p_match:
+                        val = p_match.group(1).replace(" ", "")
+                        # Avoid if it's 10th/SSLC
+                        if "10th" not in window.lower() and "sslc" not in window.lower() and "ssc" not in window.lower():
+                            twelfth = val
+                            break
+                if twelfth: break
+
         # Only use fallback if specific patterns didn't match
         # This prevents confusing 10th and 12th percentages
         if not tenth or not twelfth:
@@ -178,9 +197,9 @@ def _fallback_minimal_parse(text: str) -> Dict[str, Any]:
                 context = text[start:end].lower()
                 
                 # Classify based on nearby text
-                if any(term in context for term in ["10th", "sslc", "ssc"]) and not tenth:
+                if any(term in context for term in ["10th", "sslc", "ssc", "class 10", "x "]) and not tenth:
                     tenth = percent
-                elif any(term in context for term in ["12th", "2 pu", "2pu", "puc", "hsc"]) and not twelfth:
+                elif any(term in context for term in ["12th", "2 pu", "2pu", "puc", "hsc", "class 12", "xii", "intermediate"]) and not twelfth:
                     twelfth = percent
                 else:
                     all_percents.append((percent, context))
@@ -295,8 +314,8 @@ async def upload_resume(file: UploadFile = File(...), cleanup: bool = False, mod
                 + "\n\nCRITICAL: Return ONLY the JSON object. No markdown, no code blocks, no explanations. "
                 "Populate all fields from the resume text. Use empty strings or empty arrays for missing data.\n\n"
                 "CRITICAL EDUCATION EXTRACTION RULES:\n"
-                "- For 10th/SSLC/SSC: Look ONLY for '10th', 'SSLC', 'SSC', or 'Class 10'. DO NOT confuse with 12th.\n"
-                "- For 12th/PUC/HSC: Look ONLY for '12th', '2 PU', '2pu', '2 pu', 'PUC', 'HSC', 'Class 12', or 'II PUC'. "
+                "- For 10th/SSLC/SSC: Look ONLY for '10th', 'SSLC', 'SSC', 'Class 10', or 'X'. DO NOT confuse with 12th.\n"
+                "- For 12th/PUC/HSC: Look ONLY for '12th', '2 PU', '2pu', '2 pu', 'PUC', 'HSC', 'Class 12', 'II PUC', 'XII', or 'Intermediate'. "
                 "These are DIFFERENT from 10th - do not mix them up.\n"
                 "- When creating education entries, clearly label each one. If you see '2 PU' or 'PUC', that is 12th, NOT 10th.\n"
                 "- If a percentage appears near '2 PU', 'PUC', or 'HSC', it belongs to 12th, not 10th.\n"
@@ -336,7 +355,7 @@ async def upload_resume(file: UploadFile = File(...), cleanup: bool = False, mod
                 # Check for 10th - must be explicit, avoid matching "12th" or "2 pu"
                 # Only assign if we haven't found it yet and it's clearly 10th
                 if not tenth_pct and (any(term in institution_lower or term in degree_lower or term in field_lower 
-                       for term in ["10th", "sslc", "ssc", "class 10"]) and 
+                       for term in ["10th", "sslc", "ssc", "class 10", "x "]) and 
                     "12th" not in institution_lower and "12th" not in degree_lower and 
                     "2 pu" not in institution_lower and "2pu" not in institution_lower and
                     "puc" not in institution_lower and "hsc" not in institution_lower):
@@ -345,7 +364,7 @@ async def upload_resume(file: UploadFile = File(...), cleanup: bool = False, mod
                 # Check for 12th - must be explicit, avoid matching "10th"
                 # Only assign if we haven't found it yet and it's clearly 12th
                 if not twelfth_pct and (any(term in institution_lower or term in degree_lower or term in field_lower 
-                       for term in ["12th", "2 pu", "2pu", "puc", "hsc", "ii pu", "class 12"]) and
+                       for term in ["12th", "2 pu", "2pu", "puc", "hsc", "ii pu", "class 12", "xii", "intermediate"]) and
                     "10th" not in institution_lower and "10th" not in degree_lower and
                     "sslc" not in institution_lower and "ssc" not in institution_lower):
                     twelfth_pct = grade_value
