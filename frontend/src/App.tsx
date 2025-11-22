@@ -1,5 +1,15 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { Upload, FileText, Brain, Code, BarChart3, Clock, CheckCircle, AlertCircle, ArrowRight, ArrowLeft } from "lucide-react";
+
+// UI Components
+import { Button } from "./components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./components/ui/card";
+import { Progress } from "./components/ui/progress";
+import { Badge } from "./components/ui/badge";
+import { LoadingOverlay, LoadingSpinner } from "./components/ui/loading";
+import { cn } from "./lib/utils";
 
 // -------------------- Types --------------------
 
@@ -60,42 +70,7 @@ if (typeof window !== "undefined" && import.meta.env.DEV) {
   console.log("VITE_BACKEND_URL env:", import.meta.env.VITE_BACKEND_URL);
 }
 
-// -------------------- Small UI Components --------------------
-
-function LoaderOverlay({ text = "Loading..." }: { text?: string }) {
-  return (
-    <div className="overlay">
-      <div>
-        <div className="spinner" />
-        <div style={{ marginTop: 12, color: "#111", fontWeight: 600 }}>{text}</div>
-      </div>
-    </div>
-  );
-}
-
-function Button(
-  {
-    children,
-    kind = "primary",
-    ...props
-  }: React.ButtonHTMLAttributes<HTMLButtonElement> & { kind?: "primary" | "secondary" | "ghost" }
-) {
-  const cls =
-    kind === "primary" ? "btn btn-primary" : kind === "secondary" ? "btn btn-secondary" : "btn-ghost";
-  return (
-    <button className={cls} {...props}>
-      {children}
-    </button>
-  );
-}
-
-function ProgressBar({ value }: { value: number }) {
-  return (
-    <div className="progress">
-      <div className="progress-bar" style={{ width: `${Math.min(100, Math.max(0, value))}%` }} />
-    </div>
-  );
-}
+// -------------------- Modern UI Components --------------------
 
 function TimerCircle({ seconds }: { seconds: number }) {
   const pct = Math.max(0, Math.min(1, seconds / (30 * 60)));
@@ -151,6 +126,7 @@ function ParsePage() {
   const [data, setData] = useState<Parsed | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [dragActive, setDragActive] = useState(false);
   const navigate = useNavigate();
 
   async function handleParse(e: React.FormEvent) {
@@ -190,57 +166,192 @@ function ParsePage() {
   }
 
   return (
-    <div className="container">
-      {loading && <LoaderOverlay text="Analyzing your resume…" />}
-      <header className="page-head">
-        <h1>AI Interview_Bot</h1>
-        <p>Upload your resume. We'll extract your profile automatically.</p>
-      </header>
-
-      <form className="card hero" onSubmit={handleParse}>
-        <div
-          id="dropzone"
-          className="uploader"
-          onDragOver={(e) => { e.preventDefault(); document.getElementById("dropzone")?.classList.add("uploader-hover"); }}
-          onDragLeave={() => document.getElementById("dropzone")?.classList.remove("uploader-hover")}
-          onDrop={(e) => { e.preventDefault(); document.getElementById("dropzone")?.classList.remove("uploader-hover"); const f = e.dataTransfer.files?.[0]; if (f && f.type === "application/pdf") setFile(f); }}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      {loading && <LoadingOverlay text="Analyzing your resume with AI…" />}
+      
+      <div className="mx-auto max-w-4xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-8"
         >
-          <input id="file-input" type="file" accept="application/pdf" style={{ display: "none" }} onChange={(e) => setFile(e.target.files?.[0] || null)} />
-          <label className="uploader-inner" htmlFor="file-input">
-            {file ? <span>{file.name}</span> : <span>Drag & drop your PDF here or click to browse</span>}
-          </label>
-        </div>
-        {/* Cleaning is now standard and always enabled server-side. */}
-        <button className="btn btn-primary" type="submit" disabled={!file || loading}>Parse Resume</button>
-        {error && <div className="error mt">{error}</div>}
-      </form>
-
-      {data && (
-        <section className="card profile-card">
-          <h2>Profile Summary</h2>
-          <div className="profile-grid">
-            <div><strong>Name:</strong> {data.name || "—"}</div>
-            <div><strong>Email:</strong> {data.email || "—"}</div>
-            <div><strong>Phone:</strong> {data.phone || "—"}</div>
-            <div><strong>10th %:</strong> {data.tenth_percentage || "—"}</div>
-            <div><strong>12th %:</strong> {data.twelfth_percentage || "—"}</div>
-            <div><strong>Degree %/CGPA:</strong> {data.degree_percentage_or_cgpa || "—"}</div>
+          <div className="flex items-center justify-center mb-4">
+            <Brain className="h-12 w-12 text-primary mr-3" />
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              AI Interview Bot
+            </h1>
           </div>
-          {data.experience?.length ? (
-            <div className="mt">
-              <h4>Experience</h4>
-              <ul className="nice-list">
-                {data.experience.map((x, i) => <li key={i}>{x}</li>)}
-              </ul>
-            </div>
-          ) : null}
-          {userId && (
-            <div className="mt">
-              <button className="btn btn-primary" onClick={() => navigate("/questions", { state: { userId, parsed: data } })}>Continue</button>
-            </div>
-          )}
-        </section>
-      )}
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Upload your resume and let our AI analyze your profile to create a personalized interview experience
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Upload className="h-5 w-5 mr-2" />
+                Upload Resume
+              </CardTitle>
+              <CardDescription>
+                Upload your PDF resume for AI-powered analysis and personalized questions
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleParse} className="space-y-4">
+                <div
+                  className={cn(
+                    "border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer",
+                    dragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25 hover:border-primary/50",
+                    file && "border-green-500 bg-green-50"
+                  )}
+                  onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
+                  onDragLeave={() => setDragActive(false)}
+                  onDrop={(e) => { 
+                    e.preventDefault(); 
+                    setDragActive(false); 
+                    const f = e.dataTransfer.files?.[0]; 
+                    if (f && f.type === "application/pdf") setFile(f); 
+                  }}
+                  onClick={() => document.getElementById("file-input")?.click()}
+                >
+                  <input 
+                    id="file-input" 
+                    type="file" 
+                    accept="application/pdf" 
+                    className="hidden" 
+                    onChange={(e) => setFile(e.target.files?.[0] || null)} 
+                  />
+                  
+                  {file ? (
+                    <div className="flex items-center justify-center">
+                      <FileText className="h-8 w-8 text-green-600 mr-3" />
+                      <div>
+                        <p className="font-medium text-green-700">{file.name}</p>
+                        <p className="text-sm text-green-600">Ready to analyze</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                      <p className="text-lg font-medium mb-2">Drop your PDF here or click to browse</p>
+                      <p className="text-sm text-muted-foreground">Supports PDF files up to 10MB</p>
+                    </div>
+                  )}
+                </div>
+                
+                <Button 
+                  type="submit" 
+                  disabled={!file || loading} 
+                  className="w-full"
+                  size="lg"
+                >
+                  {loading ? (
+                    <>
+                      <LoadingSpinner size="sm" className="mr-2" />
+                      Analyzing Resume...
+                    </>
+                  ) : (
+                    <>
+                      <Brain className="h-4 w-4 mr-2" />
+                      Analyze Resume with AI
+                    </>
+                  )}
+                </Button>
+                
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex items-center p-4 bg-destructive/10 border border-destructive/20 rounded-lg"
+                  >
+                    <AlertCircle className="h-5 w-5 text-destructive mr-3" />
+                    <p className="text-destructive font-medium">{error}</p>
+                  </motion.div>
+                )}
+              </form>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {data && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
+                  Profile Extracted Successfully
+                </CardTitle>
+                <CardDescription>
+                  Review your extracted information before proceeding
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">Name</label>
+                    <p className="font-medium">{data.name || "—"}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">Email</label>
+                    <p className="font-medium">{data.email || "—"}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">Phone</label>
+                    <p className="font-medium">{data.phone || "—"}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">10th Grade %</label>
+                    <p className="font-medium">{data.tenth_percentage || "—"}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">12th Grade %</label>
+                    <p className="font-medium">{data.twelfth_percentage || "—"}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">Degree %/CGPA</label>
+                    <p className="font-medium">{data.degree_percentage_or_cgpa || "—"}</p>
+                  </div>
+                </div>
+                
+                {data.experience?.length ? (
+                  <div className="space-y-3">
+                    <label className="text-sm font-medium text-muted-foreground">Experience</label>
+                    <div className="space-y-2">
+                      {data.experience.map((exp, i) => (
+                        <Badge key={i} variant="secondary" className="mr-2 mb-2">
+                          {exp}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+                
+                {userId && (
+                  <div className="pt-4">
+                    <Button 
+                      onClick={() => navigate("/questions", { state: { userId, parsed: data } })}
+                      size="lg"
+                      className="w-full"
+                    >
+                      Continue to Skill Assessment
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 }
