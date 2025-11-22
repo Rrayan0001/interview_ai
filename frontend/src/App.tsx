@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Upload, FileText, Brain, Code, BarChart3, Clock, CheckCircle, AlertCircle, ArrowRight, ArrowLeft } from "lucide-react";
 
 // UI Components
