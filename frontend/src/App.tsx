@@ -425,7 +425,7 @@ function QuestionsPage() {
 
   return (
     <div className="container">
-      {saving && <LoaderOverlay text="Selecting the best questions for you…" />}
+      {saving && <LoadingOverlay text="Selecting the best questions for you…" />}
       <header className="page-head">
         <h1>Choose Your Skill Levels</h1>
         <p>We tailor the exam based on your comfort level.</p>
@@ -643,7 +643,7 @@ function TestPage() {
     <div className="container">
       <div className="card test-header">
         <div className="test-header-left">AI Assessment</div>
-        <div className="test-header-center"><ProgressBar value={progress} /></div>
+        <div className="test-header-center"><Progress value={progress} /></div>
         <div className="test-header-right"><TimerCircle seconds={remaining} /></div>
       </div>
 
@@ -791,7 +791,7 @@ function ResultsPage() {
 
   return (
     <div className="container">
-      {loading && <LoaderOverlay text="Generating your personalized report…" />}
+      {loading && <LoadingOverlay text="Generating your personalized report…" />}
       <header className="page-head">
         <h1>Career & Skill Development Report</h1>
         <p>A personalized analysis based on your test performance and academic profile.</p>
