@@ -9,12 +9,17 @@ interface LoadingOverlayProps {
 export function LoadingOverlay({ text = "Loading...", className }: LoadingOverlayProps) {
   return (
     <div className={cn(
-      "fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm",
+      "fixed inset-0 z-50 flex items-center justify-center bg-white/90",
       className
     )}>
-      <div className="flex flex-col items-center space-y-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-sm font-medium text-muted-foreground">{text}</p>
+      <div className="brutal-card brutal-shadow-xl p-12 text-center">
+        <div className="brutal-border brutal-shadow-lg p-6 bg-black mb-6 mx-auto w-fit">
+          <Loader2 className="h-16 w-16 animate-spin text-white" />
+        </div>
+        <p className="text-2xl font-black uppercase tracking-wider">{text}</p>
+        <div className="brutal-border brutal-shadow bg-yellow-300 p-2 mt-4">
+          <p className="text-sm font-bold uppercase">PLEASE WAIT...</p>
+        </div>
       </div>
     </div>
   )

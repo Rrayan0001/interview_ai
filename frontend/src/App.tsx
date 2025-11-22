@@ -166,48 +166,54 @@ function ParsePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      {loading && <LoadingOverlay text="Analyzing your resume with AI…" />}
+    <div className="min-h-screen bg-white p-6">
+      {loading && <LoadingOverlay text="ANALYZING YOUR RESUME WITH AI..." />}
       
       <div className="mx-auto max-w-4xl">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
+          className="text-center mb-12"
         >
-          <div className="flex items-center justify-center mb-4">
-            <Brain className="h-12 w-12 text-primary mr-3" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              AI Interview Bot
+          <div className="flex items-center justify-center mb-6">
+            <div className="brutal-border brutal-shadow-lg p-4 bg-black mr-6">
+              <Brain className="h-16 w-16 text-white" />
+            </div>
+            <h1 className="text-6xl font-black uppercase tracking-wider leading-none">
+              AI<br/>INTERVIEW<br/>BOT
             </h1>
           </div>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Upload your resume and let our AI analyze your profile to create a personalized interview experience
-          </p>
+          <div className="brutal-border brutal-shadow bg-yellow-300 p-4 max-w-3xl mx-auto">
+            <p className="text-xl font-bold uppercase tracking-wide">
+              UPLOAD YOUR RESUME → GET AI ANALYSIS → DOMINATE YOUR INTERVIEW
+            </p>
+          </div>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+          transition={{ delay: 0.2 }}
         >
-          <Card className="mb-6">
+          <Card className="mb-8">
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Upload className="h-5 w-5 mr-2" />
-                Upload Resume
+                <div className="brutal-border brutal-shadow p-2 bg-black mr-4">
+                  <Upload className="h-6 w-6 text-white" />
+                </div>
+                UPLOAD RESUME
               </CardTitle>
-              <CardDescription>
-                Upload your PDF resume for AI-powered analysis and personalized questions
+              <CardDescription className="text-lg font-bold uppercase tracking-wide">
+                DROP YOUR PDF → GET INSTANT AI ANALYSIS
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleParse} className="space-y-4">
+              <form onSubmit={handleParse} className="space-y-6">
                 <div
                   className={cn(
-                    "border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer",
-                    dragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25 hover:border-primary/50",
-                    file && "border-green-500 bg-green-50"
+                    "brutal-border brutal-shadow-lg p-12 text-center transition-all cursor-pointer bg-white",
+                    dragActive && "brutal-shadow-xl transform translate-x-1 translate-y-1",
+                    file && "bg-green-100 border-green-500"
                   )}
                   onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
                   onDragLeave={() => setDragActive(false)}
@@ -229,17 +235,24 @@ function ParsePage() {
                   
                   {file ? (
                     <div className="flex items-center justify-center">
-                      <FileText className="h-8 w-8 text-green-600 mr-3" />
-                      <div>
-                        <p className="font-medium text-green-700">{file.name}</p>
-                        <p className="text-sm text-green-600">Ready to analyze</p>
+                      <div className="brutal-border brutal-shadow p-3 bg-green-500 mr-4">
+                        <FileText className="h-8 w-8 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <p className="text-2xl font-black uppercase">{file.name}</p>
+                        <p className="text-lg font-bold text-green-600 uppercase">READY TO ANALYZE!</p>
                       </div>
                     </div>
                   ) : (
                     <div>
-                      <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <p className="text-lg font-medium mb-2">Drop your PDF here or click to browse</p>
-                      <p className="text-sm text-muted-foreground">Supports PDF files up to 10MB</p>
+                      <div className="brutal-border brutal-shadow-lg p-6 bg-black mx-auto mb-6 w-fit">
+                        <Upload className="h-16 w-16 text-white" />
+                      </div>
+                      <p className="text-3xl font-black uppercase mb-4">DROP PDF HERE</p>
+                      <p className="text-xl font-bold uppercase tracking-wide">OR CLICK TO BROWSE</p>
+                      <div className="brutal-border brutal-shadow bg-yellow-300 p-2 mt-4 inline-block">
+                        <p className="text-sm font-bold uppercase">MAX 10MB • PDF ONLY</p>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -252,25 +265,29 @@ function ParsePage() {
                 >
                   {loading ? (
                     <>
-                      <LoadingSpinner size="sm" className="mr-2" />
-                      Analyzing Resume...
+                      <LoadingSpinner size="sm" className="mr-3" />
+                      ANALYZING RESUME...
                     </>
                   ) : (
                     <>
-                      <Brain className="h-4 w-4 mr-2" />
-                      Analyze Resume with AI
+                      <Brain className="h-5 w-5 mr-3" />
+                      ANALYZE WITH AI
                     </>
                   )}
                 </Button>
                 
                 {error && (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="flex items-center p-4 bg-destructive/10 border border-destructive/20 rounded-lg"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="brutal-border brutal-shadow bg-red-100 p-6"
                   >
-                    <AlertCircle className="h-5 w-5 text-destructive mr-3" />
-                    <p className="text-destructive font-medium">{error}</p>
+                    <div className="flex items-center">
+                      <div className="brutal-border p-2 bg-red-500 mr-4">
+                        <AlertCircle className="h-5 w-5 text-white" />
+                      </div>
+                      <p className="text-xl font-bold uppercase">{error}</p>
+                    </div>
                   </motion.div>
                 )}
               </form>
@@ -282,52 +299,55 @@ function ParsePage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.4 }}
+            className="brutal-bounce"
           >
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
-                  Profile Extracted Successfully
+                  <div className="brutal-border brutal-shadow p-2 bg-green-500 mr-4">
+                    <CheckCircle className="h-6 w-6 text-white" />
+                  </div>
+                  PROFILE EXTRACTED!
                 </CardTitle>
-                <CardDescription>
-                  Review your extracted information before proceeding
+                <CardDescription className="text-lg font-bold uppercase tracking-wide">
+                  AI ANALYSIS COMPLETE → REVIEW YOUR DATA
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-muted-foreground">Name</label>
-                    <p className="font-medium">{data.name || "—"}</p>
+              <CardContent className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="brutal-border brutal-shadow p-4 bg-gray-50">
+                    <label className="text-sm font-black uppercase tracking-wide mb-2 block">NAME</label>
+                    <p className="text-xl font-bold">{data.name || "—"}</p>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-muted-foreground">Email</label>
-                    <p className="font-medium">{data.email || "—"}</p>
+                  <div className="brutal-border brutal-shadow p-4 bg-gray-50">
+                    <label className="text-sm font-black uppercase tracking-wide mb-2 block">EMAIL</label>
+                    <p className="text-xl font-bold">{data.email || "—"}</p>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-muted-foreground">Phone</label>
-                    <p className="font-medium">{data.phone || "—"}</p>
+                  <div className="brutal-border brutal-shadow p-4 bg-gray-50">
+                    <label className="text-sm font-black uppercase tracking-wide mb-2 block">PHONE</label>
+                    <p className="text-xl font-bold">{data.phone || "—"}</p>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-muted-foreground">10th Grade %</label>
-                    <p className="font-medium">{data.tenth_percentage || "—"}</p>
+                  <div className="brutal-border brutal-shadow p-4 bg-yellow-200">
+                    <label className="text-sm font-black uppercase tracking-wide mb-2 block">10TH GRADE %</label>
+                    <p className="text-xl font-bold">{data.tenth_percentage || "—"}</p>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-muted-foreground">12th Grade %</label>
-                    <p className="font-medium">{data.twelfth_percentage || "—"}</p>
+                  <div className="brutal-border brutal-shadow p-4 bg-yellow-200">
+                    <label className="text-sm font-black uppercase tracking-wide mb-2 block">12TH GRADE %</label>
+                    <p className="text-xl font-bold">{data.twelfth_percentage || "—"}</p>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-muted-foreground">Degree %/CGPA</label>
-                    <p className="font-medium">{data.degree_percentage_or_cgpa || "—"}</p>
+                  <div className="brutal-border brutal-shadow p-4 bg-yellow-200">
+                    <label className="text-sm font-black uppercase tracking-wide mb-2 block">DEGREE/CGPA</label>
+                    <p className="text-xl font-bold">{data.degree_percentage_or_cgpa || "—"}</p>
                   </div>
                 </div>
                 
                 {data.experience?.length ? (
-                  <div className="space-y-3">
-                    <label className="text-sm font-medium text-muted-foreground">Experience</label>
-                    <div className="space-y-2">
+                  <div className="brutal-border brutal-shadow-lg p-6 bg-blue-100">
+                    <label className="text-lg font-black uppercase tracking-wide mb-4 block">EXPERIENCE</label>
+                    <div className="flex flex-wrap gap-3">
                       {data.experience.map((exp, i) => (
-                        <Badge key={i} variant="secondary" className="mr-2 mb-2">
+                        <Badge key={i} variant="default" className="text-sm">
                           {exp}
                         </Badge>
                       ))}
@@ -336,14 +356,16 @@ function ParsePage() {
                 ) : null}
                 
                 {userId && (
-                  <div className="pt-4">
+                  <div className="pt-6">
                     <Button 
                       onClick={() => navigate("/questions", { state: { userId, parsed: data } })}
                       size="lg"
-                      className="w-full"
+                      className="w-full text-xl"
                     >
-                      Continue to Skill Assessment
-                      <ArrowRight className="h-4 w-4 ml-2" />
+                      CONTINUE TO SKILL ASSESSMENT
+                      <div className="brutal-border brutal-shadow p-1 bg-white ml-4">
+                        <ArrowRight className="h-5 w-5 text-black" />
+                      </div>
                     </Button>
                   </div>
                 )}
