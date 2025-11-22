@@ -61,6 +61,10 @@ body {
   border: 5px solid black;
 }
 
+.brutal-border-b-3 {
+  border-bottom: 3px solid black;
+}
+
 /* Neubrutalism Button Styles */
 .brutal-btn {
   border: 3px solid black;

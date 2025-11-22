@@ -49,7 +49,7 @@ type ReportPayload = {
 // Get backend URL from environment variable, with fallback
 const getBackendUrl = () => {
   const envUrl = import.meta.env.VITE_BACKEND_URL as string | undefined;
-  
+
   // Force Railway URL in production, ignoring localhost if set by mistake
   if (import.meta.env.PROD) {
     if (!envUrl || envUrl.includes("localhost")) {
@@ -57,7 +57,7 @@ const getBackendUrl = () => {
     }
     return envUrl;
   }
-  
+
   // For development, use env var or localhost
   return envUrl || "http://localhost:8000";
 };
@@ -168,7 +168,7 @@ function ParsePage() {
   return (
     <div className="min-h-screen bg-white p-6">
       {loading && <LoadingOverlay text="ANALYZING YOUR RESUME WITH AI..." />}
-      
+
       <div className="mx-auto max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -180,7 +180,7 @@ function ParsePage() {
               <Brain className="h-16 w-16 text-white" />
             </div>
             <h1 className="text-6xl font-black uppercase tracking-wider leading-none">
-              AI<br/>INTERVIEW<br/>BOT
+              AI<br />INTERVIEW<br />BOT
             </h1>
           </div>
           <div className="brutal-border brutal-shadow bg-yellow-300 p-4 max-w-3xl mx-auto">
@@ -217,22 +217,22 @@ function ParsePage() {
                   )}
                   onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
                   onDragLeave={() => setDragActive(false)}
-                  onDrop={(e) => { 
-                    e.preventDefault(); 
-                    setDragActive(false); 
-                    const f = e.dataTransfer.files?.[0]; 
-                    if (f && f.type === "application/pdf") setFile(f); 
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setDragActive(false);
+                    const f = e.dataTransfer.files?.[0];
+                    if (f && f.type === "application/pdf") setFile(f);
                   }}
                   onClick={() => document.getElementById("file-input")?.click()}
                 >
-                  <input 
-                    id="file-input" 
-                    type="file" 
-                    accept="application/pdf" 
-                    className="hidden" 
-                    onChange={(e) => setFile(e.target.files?.[0] || null)} 
+                  <input
+                    id="file-input"
+                    type="file"
+                    accept="application/pdf"
+                    className="hidden"
+                    onChange={(e) => setFile(e.target.files?.[0] || null)}
                   />
-                  
+
                   {file ? (
                     <div className="flex items-center justify-center">
                       <div className="brutal-border brutal-shadow p-3 bg-green-500 mr-4">
@@ -256,10 +256,10 @@ function ParsePage() {
                     </div>
                   )}
                 </div>
-                
-                <Button 
-                  type="submit" 
-                  disabled={!file || loading} 
+
+                <Button
+                  type="submit"
+                  disabled={!file || loading}
                   className="w-full"
                   size="lg"
                 >
@@ -275,7 +275,7 @@ function ParsePage() {
                     </>
                   )}
                 </Button>
-                
+
                 {error && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
@@ -341,7 +341,7 @@ function ParsePage() {
                     <p className="text-xl font-bold">{data.degree_percentage_or_cgpa || "—"}</p>
                   </div>
                 </div>
-                
+
                 {data.experience?.length ? (
                   <div className="brutal-border brutal-shadow-lg p-6 bg-blue-100">
                     <label className="text-lg font-black uppercase tracking-wide mb-4 block">EXPERIENCE</label>
@@ -354,10 +354,10 @@ function ParsePage() {
                     </div>
                   </div>
                 ) : null}
-                
+
                 {userId && (
                   <div className="pt-6">
-                    <Button 
+                    <Button
                       onClick={() => navigate("/questions", { state: { userId, parsed: data } })}
                       size="lg"
                       className="w-full text-xl"
@@ -409,7 +409,6 @@ function QuestionsPage() {
       setMsg("Responses saved successfully.");
 
       // Include resume data in the request
-      // Include resume data from parsed state or fallback to empty
       const resumeData = parsed ? {
         tenth_percentage: parsed.tenth_percentage || "--",
         twelfth_percentage: parsed.twelfth_percentage || "--",
@@ -420,11 +419,11 @@ function QuestionsPage() {
       const qs = await fetch(`${backendUrl}/select_questions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          user_id: userId, 
-          aptitude_level: aptitude, 
-          reasoning_level: reasoning, 
-          coding_level: coding, 
+        body: JSON.stringify({
+          user_id: userId,
+          aptitude_level: aptitude,
+          reasoning_level: reasoning,
+          coding_level: coding,
           counts: { aptitude: 10, reasoning: 10, coding: 10 },
           resume: resumeData
         }),
@@ -447,7 +446,7 @@ function QuestionsPage() {
   return (
     <div className="min-h-screen bg-white p-6">
       {saving && <LoadingOverlay text="SELECTING THE BEST QUESTIONS FOR YOU..." />}
-      
+
       <div className="mx-auto max-w-4xl">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
           <h1 className="text-6xl font-black uppercase tracking-wider mb-4">SKILL LEVELS</h1>
@@ -457,77 +456,73 @@ function QuestionsPage() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <Card className="mb-8">
-            <CardContent className="p-8">
-              <form onSubmit={onSubmit} className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  <div className="brutal-border brutal-shadow-lg p-6 bg-blue-100">
-                    <div className="flex items-center mb-6">
-                      <div className="brutal-border brutal-shadow p-3 bg-black mr-4">
-                        <BarChart3 className="h-8 w-8 text-white" />
-                      </div>
-                      <h3 className="text-2xl font-black uppercase">APTITUDE</h3>
+          <div className="brutal-border brutal-shadow-lg bg-white p-8 mb-8">
+            <form onSubmit={onSubmit} className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="brutal-border brutal-shadow p-6 bg-blue-100">
+                  <div className="flex items-center mb-6">
+                    <div className="brutal-border brutal-shadow p-3 bg-black mr-4">
+                      <BarChart3 className="h-8 w-8 text-white" />
                     </div>
-                    <div className="space-y-3">
-                      {["beginner", "intermediate", "advance"].map((level) => (
-                        <button key={level} type="button" onClick={() => setAptitude(level)} className={cn("w-full brutal-border brutal-shadow p-4 font-bold uppercase tracking-wide transition-all", aptitude === level ? "bg-black text-white transform translate-x-1 translate-y-1" : "bg-white text-black hover:transform hover:translate-x-0.5 hover:translate-y-0.5")}>{level}</button>
-                      ))}
-                    </div>
+                    <h3 className="text-2xl font-black uppercase">APTITUDE</h3>
                   </div>
-
-                  <div className="brutal-border brutal-shadow-lg p-6 bg-green-100">
-                    <div className="flex items-center mb-6">
-                      <div className="brutal-border brutal-shadow p-3 bg-black mr-4">
-                        <Brain className="h-8 w-8 text-white" />
-                      </div>
-                      <h3 className="text-2xl font-black uppercase">REASONING</h3>
-                    </div>
-                    <div className="space-y-3">
-                      {["beginner", "intermediate", "advance"].map((level) => (
-                        <button key={level} type="button" onClick={() => setReasoning(level)} className={cn("w-full brutal-border brutal-shadow p-4 font-bold uppercase tracking-wide transition-all", reasoning === level ? "bg-black text-white transform translate-x-1 translate-y-1" : "bg-white text-black hover:transform hover:translate-x-0.5 hover:translate-y-0.5")}>{level}</button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="brutal-border brutal-shadow-lg p-6 bg-purple-100">
-                    <div className="flex items-center mb-6">
-                      <div className="brutal-border brutal-shadow p-3 bg-black mr-4">
-                        <Code className="h-8 w-8 text-white" />
-                      </div>
-                      <h3 className="text-2xl font-black uppercase">CODING</h3>
-                    </div>
-                    <div className="space-y-3">
-                      {["beginner", "intermediate", "advance"].map((level) => (
-                        <button key={level} type="button" onClick={() => setCoding(level)} className={cn("w-full brutal-border brutal-shadow p-4 font-bold uppercase tracking-wide transition-all", coding === level ? "bg-black text-white transform translate-x-1 translate-y-1" : "bg-white text-black hover:transform hover:translate-x-0.5 hover:translate-y-0.5")}>{level}</button>
-                      ))}
-                    </div>
+                  <div className="space-y-3">
+                    {["beginner", "intermediate", "advance"].map((level) => (
+                      <button key={level} type="button" onClick={() => setAptitude(level)} className={cn("w-full brutal-border brutal-shadow p-4 font-bold uppercase tracking-wide transition-all", aptitude === level ? "bg-black text-white transform translate-x-1 translate-y-1" : "bg-white text-black hover:transform hover:translate-x-0.5 hover:translate-y-0.5")}>{level}</button>
+                    ))}
                   </div>
                 </div>
 
-                <div className="flex gap-4 justify-center">
-                  <Button variant="outline" type="button" onClick={() => navigate("/")} size="lg"><ArrowLeft className="h-5 w-5 mr-2" />BACK</Button>
-                  <Button type="submit" disabled={saving} size="lg" className="text-xl px-12">{saving ? "GENERATING..." : "CONTINUE"}<ArrowRight className="h-5 w-5 ml-2" /></Button>
+                <div className="brutal-border brutal-shadow p-6 bg-green-100">
+                  <div className="flex items-center mb-6">
+                    <div className="brutal-border brutal-shadow p-3 bg-black mr-4">
+                      <Brain className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-black uppercase">REASONING</h3>
+                  </div>
+                  <div className="space-y-3">
+                    {["beginner", "intermediate", "advance"].map((level) => (
+                      <button key={level} type="button" onClick={() => setReasoning(level)} className={cn("w-full brutal-border brutal-shadow p-4 font-bold uppercase tracking-wide transition-all", reasoning === level ? "bg-black text-white transform translate-x-1 translate-y-1" : "bg-white text-black hover:transform hover:translate-x-0.5 hover:translate-y-0.5")}>{level}</button>
+                    ))}
+                  </div>
                 </div>
 
-                {msg && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="brutal-border brutal-shadow bg-green-100 p-6 text-center"><p className="text-xl font-bold uppercase text-green-700">{msg}</p></motion.div>}
-                {err && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="brutal-border brutal-shadow bg-red-100 p-6"><div className="flex items-center justify-center"><div className="brutal-border p-2 bg-red-500 mr-4"><AlertCircle className="h-5 w-5 text-white" /></div><p className="text-xl font-bold uppercase">{err}</p></div></motion.div>}
-              </form>
-            </CardContent>
-          </Card>
+                <div className="brutal-border brutal-shadow p-6 bg-purple-100">
+                  <div className="flex items-center mb-6">
+                    <div className="brutal-border brutal-shadow p-3 bg-black mr-4">
+                      <Code className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-black uppercase">CODING</h3>
+                  </div>
+                  <div className="space-y-3">
+                    {["beginner", "intermediate", "advance"].map((level) => (
+                      <button key={level} type="button" onClick={() => setCoding(level)} className={cn("w-full brutal-border brutal-shadow p-4 font-bold uppercase tracking-wide transition-all", coding === level ? "bg-black text-white transform translate-x-1 translate-y-1" : "bg-white text-black hover:transform hover:translate-x-0.5 hover:translate-y-0.5")}>{level}</button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-4 justify-center">
+                <button type="button" onClick={() => navigate("/")} className="brutal-btn px-8 py-4 flex items-center text-xl"><ArrowLeft className="h-5 w-5 mr-2" />BACK</button>
+                <button type="submit" disabled={saving} className="brutal-btn brutal-btn-primary px-12 py-4 flex items-center text-xl">{saving ? "GENERATING..." : "CONTINUE"}<ArrowRight className="h-5 w-5 ml-2" /></button>
+              </div>
+
+              {msg && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="brutal-border brutal-shadow bg-green-100 p-6 text-center"><p className="text-xl font-bold uppercase text-green-700">{msg}</p></motion.div>}
+              {err && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="brutal-border brutal-shadow bg-red-100 p-6"><div className="flex items-center justify-center"><div className="brutal-border p-2 bg-red-500 mr-4"><AlertCircle className="h-5 w-5 text-white" /></div><p className="text-xl font-bold uppercase">{err}</p></div></motion.div>}
+            </form>
+          </div>
         </motion.div>
 
         {ready && (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 }} className="brutal-bounce">
-            <Card>
-              <CardContent className="p-8 text-center">
-                <div className="brutal-border brutal-shadow-lg p-6 bg-green-500 mb-6 mx-auto w-fit">
-                  <CheckCircle className="h-16 w-16 text-white" />
-                </div>
-                <h2 className="text-4xl font-black uppercase mb-4">PROFILE READY!</h2>
-                <p className="text-xl font-bold uppercase tracking-wide mb-8">YOUR PERSONALIZED QUESTION SET IS PREPARED</p>
-                <Button onClick={toInstructions} size="lg" className="text-xl px-12">CONTINUE TO INSTRUCTIONS<ArrowRight className="h-5 w-5 ml-3" /></Button>
-              </CardContent>
-            </Card>
+            <div className="brutal-border brutal-shadow-lg bg-white p-8 text-center">
+              <div className="brutal-border brutal-shadow-lg p-6 bg-green-500 mb-6 mx-auto w-fit">
+                <CheckCircle className="h-16 w-16 text-white" />
+              </div>
+              <h2 className="text-4xl font-black uppercase mb-4">PROFILE READY!</h2>
+              <p className="text-xl font-bold uppercase tracking-wide mb-8">YOUR PERSONALIZED QUESTION SET IS PREPARED</p>
+              <button onClick={toInstructions} className="brutal-btn brutal-btn-primary px-12 py-4 text-xl flex items-center mx-auto">CONTINUE TO INSTRUCTIONS<ArrowRight className="h-5 w-5 ml-3" /></button>
+            </div>
           </motion.div>
         )}
       </div>
@@ -554,55 +549,58 @@ function InstructionsPage() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-6">
-          <Card>
-            <CardHeader className="brutal-border-b-3 border-black">
-              <CardTitle className="flex items-center"><div className="brutal-border brutal-shadow p-2 bg-black mr-4"><AlertCircle className="h-6 w-6 text-white" /></div>GENERAL GUIDELINES</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
+          <div className="brutal-border brutal-shadow-lg bg-white">
+            <div className="brutal-border-b-3 border-black p-6">
+              <h3 className="text-2xl font-black uppercase flex items-center">
+                <div className="brutal-border brutal-shadow p-2 bg-black mr-4">
+                  <AlertCircle className="h-6 w-6 text-white" />
+                </div>
+                GENERAL GUIDELINES
+              </h3>
+            </div>
+            <div className="p-6">
               <ul className="space-y-3 text-lg">
                 <li className="flex items-start"><span className="brutal-border brutal-shadow p-2 bg-black text-white font-bold mr-3 mt-1">→</span><span>Ensure a stable internet connection</span></li>
                 <li className="flex items-start"><span className="brutal-border brutal-shadow p-2 bg-black text-white font-bold mr-3 mt-1">→</span><span>Do NOT refresh the page during the test</span></li>
                 <li className="flex items-start"><span className="brutal-border brutal-shadow p-2 bg-black text-white font-bold mr-3 mt-1">→</span><span>Keep your device charged</span></li>
               </ul>
-            </CardContent>
-          </Card>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="brutal-border brutal-shadow-lg bg-blue-50">
-              <CardHeader><CardTitle className="text-2xl">APTITUDE</CardTitle></CardHeader>
-              <CardContent><p className="font-bold">10 questions • Multiple choice • Choose the best answer</p></CardContent>
-            </Card>
-            <Card className="brutal-border brutal-shadow-lg bg-green-50">
-              <CardHeader><CardTitle className="text-2xl">REASONING</CardTitle></CardHeader>
-              <CardContent><p className="font-bold">10 questions • Analytical and logical skills</p></CardContent>
-            </Card>
-            <Card className="brutal-border brutal-shadow-lg bg-purple-50">
-              <CardHeader><CardTitle className="text-2xl">CODING</CardTitle></CardHeader>
-              <CardContent><p className="font-bold">10 questions • Fundamentals and problem-solving</p></CardContent>
-            </Card>
+            </div>
           </div>
 
-          <Card className="brutal-border brutal-shadow-lg bg-red-50">
-            <CardHeader><CardTitle className="flex items-center text-red-700"><Clock className="h-6 w-6 mr-2" />IMPORTANT NOTES</CardTitle></CardHeader>
-            <CardContent>
-              <ul className="space-y-3 text-lg font-bold">
-                <li className="flex items-start"><span className="text-red-600 mr-3">⚠</span><span>The timer (30 minutes) starts once you begin</span></li>
-                <li className="flex items-start"><span className="text-red-600 mr-3">⚠</span><span>You CANNOT pause the test once started</span></li>
-                <li className="flex items-start"><span className="text-red-600 mr-3">⚠</span><span>Submit before time runs out to save answers</span></li>
-              </ul>
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="brutal-border brutal-shadow-lg bg-blue-50 p-6">
+              <h3 className="text-2xl font-black uppercase mb-4">APTITUDE</h3>
+              <p className="font-bold">10 questions • Multiple choice • Choose the best answer</p>
+            </div>
+            <div className="brutal-border brutal-shadow-lg bg-green-50 p-6">
+              <h3 className="text-2xl font-black uppercase mb-4">REASONING</h3>
+              <p className="font-bold">10 questions • Analytical and logical skills</p>
+            </div>
+            <div className="brutal-border brutal-shadow-lg bg-purple-50 p-6">
+              <h3 className="text-2xl font-black uppercase mb-4">CODING</h3>
+              <p className="font-bold">10 questions • Fundamentals and problem-solving</p>
+            </div>
+          </div>
 
-          <Card className="brutal-border-thick brutal-shadow-xl bg-green-100">
-            <CardContent className="p-8 text-center">
-              <h3 className="text-3xl font-black uppercase mb-4">READY TO START?</h3>
-              <p className="text-xl font-bold mb-8">Once you click START TEST, the timer will begin and cannot be paused.</p>
-              <div className="flex gap-4 justify-center">
-                <Button variant="outline" onClick={() => navigate("/questions", { state: { userId, parsed: location?.state?.parsed } })} size="lg"><ArrowLeft className="h-5 w-5 mr-2" />BACK</Button>
-                <Button onClick={() => navigate("/test", { state: { userId, selected: location?.state?.selected, parsed: location?.state?.parsed } })} size="lg" className="text-2xl px-12">START TEST<ArrowRight className="h-5 w-5 ml-3" /></Button>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="brutal-border brutal-shadow-lg bg-red-50 p-6">
+            <h3 className="text-2xl font-black uppercase flex items-center text-red-700 mb-4">
+              <Clock className="h-6 w-6 mr-2" />IMPORTANT NOTES
+            </h3>
+            <ul className="space-y-3 text-lg font-bold">
+              <li className="flex items-start"><span className="text-red-600 mr-3">⚠</span><span>The timer (30 minutes) starts once you begin</span></li>
+              <li className="flex items-start"><span className="text-red-600 mr-3">⚠</span><span>You CANNOT pause the test once started</span></li>
+              <li className="flex items-start"><span className="text-red-600 mr-3">⚠</span><span>Submit before time runs out to save answers</span></li>
+            </ul>
+          </div>
+
+          <div className="brutal-border-thick brutal-shadow-xl bg-green-100 p-8 text-center">
+            <h3 className="text-3xl font-black uppercase mb-4">READY TO START?</h3>
+            <p className="text-xl font-bold mb-8">Once you click START TEST, the timer will begin and cannot be paused.</p>
+            <div className="flex gap-4 justify-center">
+              <button onClick={() => navigate("/questions", { state: { userId, parsed: location?.state?.parsed } })} className="brutal-btn px-8 py-4 flex items-center text-xl"><ArrowLeft className="h-5 w-5 mr-2" />BACK</button>
+              <button onClick={() => navigate("/test", { state: { userId, selected: location?.state?.selected, parsed: location?.state?.parsed } })} className="brutal-btn brutal-btn-primary px-12 py-4 flex items-center text-2xl">START TEST<ArrowRight className="h-5 w-5 ml-3" /></button>
+            </div>
+          </div>
         </motion.div>
       </div>
     </div>
@@ -696,9 +694,15 @@ function TestPage() {
 
   if (!selected) {
     return (
-      <div className="container">
-        <div className="card">No test loaded. Go back to Skill Level.</div>
-        <button className="btn btn-primary" onClick={() => navigate("/questions")}>Back</button>
+      <div className="min-h-screen bg-white p-6 flex items-center justify-center">
+        <div className="brutal-border brutal-shadow-lg bg-white p-8 text-center max-w-md">
+          <div className="brutal-border p-4 bg-red-500 mb-6 mx-auto w-fit">
+            <AlertCircle className="h-12 w-12 text-white" />
+          </div>
+          <h2 className="text-2xl font-black uppercase mb-4">NO TEST LOADED</h2>
+          <p className="text-lg font-bold mb-6">Please go back and select your skill levels.</p>
+          <button className="brutal-btn brutal-btn-primary px-8 py-3 w-full" onClick={() => navigate("/questions")}>BACK TO SKILLS</button>
+        </div>
       </div>
     );
   }
@@ -708,79 +712,170 @@ function TestPage() {
   const progress = total ? (answeredCount / total) * 100 : 0;
 
   if (result) {
-    // Guard: navigation should already redirect; still show minimal
     return (
-      <div className="container"><div className="card">Submitting…</div></div>
+      <div className="min-h-screen bg-white p-6 flex items-center justify-center">
+        <LoadingOverlay text="SUBMITTING TEST..." />
+      </div>
     );
   }
 
   return (
-    <div className="container">
-      <div className="card test-header">
-        <div className="test-header-left">AI Assessment</div>
-        <div className="test-header-center"><Progress value={progress} /></div>
-        <div className="test-header-right"><TimerCircle seconds={remaining} /></div>
-      </div>
+    <div className="min-h-screen bg-white p-6">
+      <div className="mx-auto max-w-7xl">
+        {/* Header */}
+        <div className="brutal-border brutal-shadow-lg bg-white p-4 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center">
+            <div className="brutal-border p-2 bg-black mr-3">
+              <Brain className="h-6 w-6 text-white" />
+            </div>
+            <span className="text-xl font-black uppercase">AI ASSESSMENT</span>
+          </div>
 
-      <div className="split">
-        <div className="left-panel card">
-          <div className="q-meta">Question {current + 1} of {total}</div>
-          <div className="q-view">
-            <h3 className="q-title">{currentQ?.q?.question || ""}</h3>
-            <div className="options">
-              {(currentQ?.q?.options || []).map((opt: string, i: number) => {
-                const checked = answers[currentQ.id] === opt;
-                return (
-                  <label key={i} className={`opt ${checked ? "opt-active" : ""}`}>
-                    <input
-                      type="radio"
-                      name={currentQ.id}
-                      value={opt}
-                      checked={checked}
-                      onChange={(e) => setAnswers((prev) => ({ ...prev, [currentQ.id]: e.target.value }))}
-                    />
-                    <span>{opt}</span>
-                  </label>
-                );
-              })}
+          <div className="flex-1 w-full md:mx-8">
+            <div className="flex justify-between text-sm font-bold uppercase mb-1">
+              <span>Progress</span>
+              <span>{Math.round(progress)}%</span>
+            </div>
+            <div className="brutal-progress h-4 w-full">
+              <div className="brutal-progress-bar h-full" style={{ width: `${progress}%` }}></div>
             </div>
           </div>
-          <div className="actions">
-            <button className="btn-ghost" disabled={current === 0} onClick={() => setCurrent((c) => Math.max(0, c - 1))}>Previous</button>
-            {current < total - 1 ? (
-              <button className="btn btn-primary" onClick={() => setCurrent((c) => Math.min(total - 1, c + 1))}>Next</button>
-            ) : (
-              <button className="btn btn-primary" onClick={handleSubmit}>Submit Test</button>
-            )}
+
+          <div className="flex items-center">
+            <div className="brutal-border p-2 bg-yellow-300 mr-3">
+              <Clock className="h-6 w-6 text-black" />
+            </div>
+            <span className="text-xl font-black font-mono">
+              {String(Math.floor(remaining / 60)).padStart(2, "0")}:{String(remaining % 60).padStart(2, "0")}
+            </span>
           </div>
         </div>
 
-        <div className="right-panel card">
-          <h3>Questions</h3>
-          <div className="grid-nav">
-            {flat.map((f, idx) => {
-              const isCurrent = idx === current;
-              const isAnswered = !!answers[f.id];
-              return (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Question Panel */}
+          <div className="lg:col-span-2">
+            <div className="brutal-border brutal-shadow-lg bg-white h-full flex flex-col">
+              <div className="brutal-border-b-3 border-black p-6 bg-gray-50 flex justify-between items-center">
+                <span className="font-black uppercase text-lg">QUESTION {current + 1} OF {total}</span>
+                <span className="brutal-border px-3 py-1 bg-black text-white text-sm font-bold uppercase">{currentQ.domain}</span>
+              </div>
+
+              <div className="p-8 flex-1">
+                <h3 className="text-2xl font-bold mb-8 leading-relaxed">{currentQ?.q?.question || ""}</h3>
+
+                <div className="space-y-4">
+                  {(currentQ?.q?.options || []).map((opt: string, i: number) => {
+                    const checked = answers[currentQ.id] === opt;
+                    return (
+                      <label
+                        key={i}
+                        className={cn(
+                          "block brutal-border p-4 cursor-pointer transition-all hover:translate-x-1 hover:translate-y-1",
+                          checked ? "bg-black text-white shadow-none translate-x-1 translate-y-1" : "bg-white hover:bg-gray-50 brutal-shadow"
+                        )}
+                      >
+                        <div className="flex items-center">
+                          <div className={cn(
+                            "w-6 h-6 border-2 mr-4 flex items-center justify-center",
+                            checked ? "border-white bg-white" : "border-black"
+                          )}>
+                            {checked && <div className="w-3 h-3 bg-black" />}
+                          </div>
+                          <input
+                            type="radio"
+                            name={currentQ.id}
+                            value={opt}
+                            checked={checked}
+                            onChange={(e) => setAnswers((prev) => ({ ...prev, [currentQ.id]: e.target.value }))}
+                            className="hidden"
+                          />
+                          <span className="text-lg font-bold">{opt}</span>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="p-6 border-t-3 border-black bg-gray-50 flex justify-between">
                 <button
-                  key={f.id}
-                  className={`bubble ${isCurrent ? "bubble-current" : isAnswered ? "bubble-answered" : ""}`}
-                  onClick={() => setCurrent(idx)}
+                  className="brutal-btn px-6 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={current === 0}
+                  onClick={() => setCurrent((c) => Math.max(0, c - 1))}
                 >
-                  {idx + 1}
+                  PREVIOUS
                 </button>
-              );
-            })}
+                {current < total - 1 ? (
+                  <button
+                    className="brutal-btn brutal-btn-primary px-8 py-3"
+                    onClick={() => setCurrent((c) => Math.min(total - 1, c + 1))}
+                  >
+                    NEXT
+                  </button>
+                ) : (
+                  <button
+                    className="brutal-btn bg-green-500 text-white px-8 py-3 hover:bg-green-600"
+                    onClick={handleSubmit}
+                  >
+                    SUBMIT TEST
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
-          <div className="legend">
-            <span className="legend-item"><span className="legend-dot bubble bubble-answered" /> Answered</span>
-            <span className="legend-item"><span className="legend-dot bubble" /> Unanswered</span>
-            <span className="legend-item"><span className="legend-dot bubble bubble-current" /> Current</span>
-          </div>
-          <div className="section-tags">
-            <div>Aptitude 1–10</div>
-            <div>Reasoning 11–20</div>
-            <div>Coding 21–30</div>
+
+          {/* Navigation Panel */}
+          <div className="lg:col-span-1">
+            <div className="brutal-border brutal-shadow-lg bg-white p-6">
+              <h3 className="text-xl font-black uppercase mb-6 flex items-center">
+                <div className="w-3 h-3 bg-black mr-2"></div>
+                QUESTION NAVIGATOR
+              </h3>
+
+              <div className="grid grid-cols-5 gap-3 mb-8">
+                {flat.map((f, idx) => {
+                  const isCurrent = idx === current;
+                  const isAnswered = !!answers[f.id];
+                  return (
+                    <button
+                      key={f.id}
+                      className={cn(
+                        "aspect-square font-bold border-2 border-black transition-all text-sm",
+                        isCurrent ? "bg-black text-white transform scale-110" :
+                          isAnswered ? "bg-green-500 text-white" : "bg-white hover:bg-gray-100"
+                      )}
+                      onClick={() => setCurrent(idx)}
+                    >
+                      {idx + 1}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="space-y-3 border-t-3 border-black pt-6">
+                <div className="flex items-center">
+                  <div className="w-4 h-4 bg-green-500 border-2 border-black mr-3"></div>
+                  <span className="font-bold uppercase text-sm">ANSWERED</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-4 h-4 bg-white border-2 border-black mr-3"></div>
+                  <span className="font-bold uppercase text-sm">UNANSWERED</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-4 h-4 bg-black border-2 border-black mr-3"></div>
+                  <span className="font-bold uppercase text-sm">CURRENT</span>
+                </div>
+              </div>
+
+              <div className="mt-8 pt-6 border-t-3 border-black">
+                <h4 className="font-black uppercase mb-3 text-sm">SECTIONS</h4>
+                <div className="space-y-2 text-sm font-bold text-gray-600">
+                  <div className="flex justify-between"><span>APTITUDE</span><span>1–10</span></div>
+                  <div className="flex justify-between"><span>REASONING</span><span>11–20</span></div>
+                  <div className="flex justify-between"><span>CODING</span><span>21–30</span></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -792,9 +887,11 @@ function TestPage() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="card">
-      <h2>{title}</h2>
-      <div>{children}</div>
+    <section className="brutal-border brutal-shadow-lg bg-white mb-8">
+      <div className="brutal-border-b-3 border-black p-4 bg-gray-50">
+        <h2 className="text-2xl font-black uppercase">{title}</h2>
+      </div>
+      <div className="p-6">{children}</div>
     </section>
   );
 }
@@ -809,9 +906,11 @@ function ResultsPage() {
 
   if (!report) {
     return (
-      <div className="container">
-        <div className="card">No report data available.</div>
-        <button className="btn btn-primary" onClick={() => navigate("/")}>Home</button>
+      <div className="min-h-screen bg-white p-6 flex items-center justify-center">
+        <div className="brutal-border brutal-shadow-lg bg-white p-8 text-center">
+          <p className="text-xl font-bold uppercase mb-6">No report data available.</p>
+          <button className="brutal-btn brutal-btn-primary px-8 py-3" onClick={() => navigate("/")}>HOME</button>
+        </div>
       </div>
     );
   }
@@ -862,101 +961,169 @@ function ResultsPage() {
   const easyAcc = byDifficulty("begin");
   const midAcc = byDifficulty("inter");
   const hardAcc = byDifficulty("adv");
-  const avg = (arr: number[]) => arr.length ? Math.round(((arr.reduce((s: number, v: number)=>s+v,0))/arr.length)*100) : 0;
+  const avg = (arr: number[]) => arr.length ? Math.round(((arr.reduce((s: number, v: number) => s + v, 0)) / arr.length) * 100) : 0;
 
   return (
-    <div className="container">
-      {loading && <LoadingOverlay text="Generating your personalized report…" />}
-      <header className="page-head">
-        <h1>Career & Skill Development Report</h1>
-        <p>A personalized analysis based on your test performance and academic profile.</p>
-      </header>
+    <div className="min-h-screen bg-white p-6">
+      {loading && <LoadingOverlay text="GENERATING YOUR PERSONALIZED REPORT..." />}
 
-      {llmMd ? (
-        <section className="card">
-          <div style={{ whiteSpace: "pre-wrap", lineHeight: 1.6 }}>{llmMd}</div>
-          <div className="actions mt">
-            <button className="btn btn-primary" onClick={fetchLLM}>Regenerate</button>
+      <div className="mx-auto max-w-5xl">
+        <header className="text-center mb-12">
+          <div className="inline-block brutal-border brutal-shadow bg-black p-4 mb-6">
+            <h1 className="text-4xl md:text-6xl font-black uppercase text-white tracking-wider">CAREER & SKILL<br />DEVELOPMENT REPORT</h1>
           </div>
-        </section>
-      ) : null}
+          <div className="brutal-border brutal-shadow bg-yellow-300 p-4 max-w-3xl mx-auto">
+            <p className="text-xl font-bold uppercase tracking-wide">A PERSONALIZED ANALYSIS BASED ON YOUR TEST PERFORMANCE AND ACADEMIC PROFILE</p>
+          </div>
+        </header>
 
-      {llmErr && (
-        <section className="card"><div className="error">{llmErr}</div></section>
-      )}
+        {llmMd ? (
+          <section className="brutal-border brutal-shadow-lg bg-white mb-8">
+            <div className="brutal-border-b-3 border-black p-4 bg-blue-100 flex justify-between items-center">
+              <h2 className="text-2xl font-black uppercase flex items-center">
+                <div className="brutal-border p-2 bg-black mr-3">
+                  <Brain className="h-6 w-6 text-white" />
+                </div>
+                AI INSIGHTS
+              </h2>
+              <button className="brutal-btn text-sm px-4 py-2" onClick={fetchLLM}>REGENERATE</button>
+            </div>
+            <div className="p-8 prose prose-lg max-w-none font-mono">
+              <div style={{ whiteSpace: "pre-wrap", lineHeight: 1.6 }}>{llmMd}</div>
+            </div>
+          </section>
+        ) : null}
 
-      <Section title="Performance Analysis">
-        <ul className="nice-list">
-          <li><strong>Total Score:</strong> {totals.overall} / {totals.totalQuestions} ({behavior.accuracy}%)</li>
-          <li><strong>Aptitude:</strong> {totals.aptitude} / {domainTotals.aptitude} ({pct(totals.aptitude, domainTotals.aptitude)}%)</li>
-          <li><strong>Reasoning:</strong> {totals.reasoning} / {domainTotals.reasoning} ({pct(totals.reasoning, domainTotals.reasoning)}%)</li>
-          <li><strong>Coding:</strong> {totals.coding} / {domainTotals.coding} ({pct(totals.coding, domainTotals.coding)}%)</li>
-          <li><strong>Consistency:</strong> {behavior.consistency}</li>
-          <li><strong>By Difficulty:</strong> Easy ≈ {avg(easyAcc)}% • Intermediate ≈ {avg(midAcc)}% • Advanced ≈ {avg(hardAcc)}%</li>
-        </ul>
-      </Section>
+        {llmErr && (
+          <section className="brutal-border brutal-shadow bg-red-100 p-6 mb-8">
+            <div className="flex items-center text-red-700 font-bold uppercase">
+              <AlertCircle className="h-6 w-6 mr-3" />
+              {llmErr}
+            </div>
+          </section>
+        )}
 
-      <Section title="Skill Gap Analysis">
-        <ul className="nice-list">
-          {strengths.length ? <li><strong>Strengths:</strong> {strengths.join(", ")}</li> : null}
-          {weaknesses.length ? <li><strong>Weaknesses:</strong> {weaknesses.join(", ")}</li> : null}
-          <li>Entry-level benchmark alignment: solidify quantitative basics, structured reasoning, and core CS fundamentals.</li>
-          <li>Differentiate between conceptual clarity and error-carefulness by reviewing wrong answers with explanations.</li>
-        </ul>
-      </Section>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <Section title="Performance Analysis">
+            <ul className="space-y-4 font-bold text-lg">
+              <li className="flex justify-between border-b-2 border-black pb-2">
+                <span>TOTAL SCORE</span>
+                <span className="bg-black text-white px-2">{totals.overall} / {totals.totalQuestions} ({behavior.accuracy}%)</span>
+              </li>
+              <li className="flex justify-between border-b-2 border-black pb-2">
+                <span>APTITUDE</span>
+                <span>{totals.aptitude} / {domainTotals.aptitude} ({pct(totals.aptitude, domainTotals.aptitude)}%)</span>
+              </li>
+              <li className="flex justify-between border-b-2 border-black pb-2">
+                <span>REASONING</span>
+                <span>{totals.reasoning} / {domainTotals.reasoning} ({pct(totals.reasoning, domainTotals.reasoning)}%)</span>
+              </li>
+              <li className="flex justify-between border-b-2 border-black pb-2">
+                <span>CODING</span>
+                <span>{totals.coding} / {domainTotals.coding} ({pct(totals.coding, domainTotals.coding)}%)</span>
+              </li>
+              <li className="flex justify-between border-b-2 border-black pb-2">
+                <span>CONSISTENCY</span>
+                <span>{behavior.consistency}</span>
+              </li>
+              <li className="pt-2">
+                <div className="text-sm uppercase mb-2">BY DIFFICULTY</div>
+                <div className="flex gap-2 text-sm">
+                  <span className="bg-green-100 border-2 border-black px-2 py-1">EASY: {avg(easyAcc)}%</span>
+                  <span className="bg-yellow-100 border-2 border-black px-2 py-1">MID: {avg(midAcc)}%</span>
+                  <span className="bg-red-100 border-2 border-black px-2 py-1">HARD: {avg(hardAcc)}%</span>
+                </div>
+              </li>
+            </ul>
+          </Section>
 
-      <Section title="Personalized 6-Week Improvement Plan">
-        <ol className="nice-list">
-          <li><strong>Weeks 1–2:</strong> Quantitative basics (percentages, ratios, arithmetic) • Daily 30 MCQs • Resource: GFG Aptitude, Khan Academy.</li>
-          <li><strong>Weeks 1–2 (Parallel):</strong> Reasoning (series, syllogisms, seating, data sufficiency) • Daily 20 MCQs • Resource: IndiaBix Reasoning.</li>
-          <li><strong>Weeks 3–4:</strong> Coding fundamentals (time/space, arrays, strings, hashing) • 3 problems/day • Resource: LeetCode Easy/Medium.</li>
-          <li><strong>Week 4:</strong> OOPs, DBMS, OS quick notes • 1 hr/day • Resource: InterviewBit CS notes.</li>
-          <li><strong>Weeks 5–6:</strong> Mixed mocks: 30Q timed sets • Post-test error log • Target accuracy +10%.</li>
-          <li><strong>Routine:</strong> 60–90 mins daily • Review all wrong answers same day • Maintain a mistakes journal.</li>
-        </ol>
-      </Section>
+          <Section title="Skill Gap Analysis">
+            <ul className="space-y-4 text-lg">
+              {strengths.length ? (
+                <li className="bg-green-50 border-2 border-black p-3">
+                  <strong className="block uppercase text-green-800 mb-1">Strengths</strong>
+                  {strengths.join(", ")}
+                </li>
+              ) : null}
+              {weaknesses.length ? (
+                <li className="bg-red-50 border-2 border-black p-3">
+                  <strong className="block uppercase text-red-800 mb-1">Weaknesses</strong>
+                  {weaknesses.join(", ")}
+                </li>
+              ) : null}
+              <li className="flex items-start"><span className="mr-2">→</span>Entry-level benchmark alignment: solidify quantitative basics, structured reasoning, and core CS fundamentals.</li>
+              <li className="flex items-start"><span className="mr-2">→</span>Differentiate between conceptual clarity and error-carefulness by reviewing wrong answers with explanations.</li>
+            </ul>
+          </Section>
+        </div>
 
-      <Section title="Career Guidance">
-        <ul className="nice-list">
-          <li><strong>Full‑stack / Frontend Development:</strong> Good fit if UI and JS fundamentals appeal. Improve DSA basics and project depth.</li>
-          <li><strong>Data Analytics:</strong> Consider if quantitative accuracy trends up. Learn Excel→SQL→Python→Tableau pipeline.</li>
-          <li><strong>QA / SDET Foundations:</strong> Strong for detail-oriented profiles. Learn testing frameworks and automation basics.</li>
-          <li><strong>Business Analyst (Tech):</strong> Blend of reasoning + communication. Practice case studies and SQL basics.</li>
-          <li><strong>DevOps Foundations:</strong> If systems interest you. Learn Linux, Git, CI/CD basics; scripting fundamentals.</li>
-        </ul>
-        <p className="mt small">Why: choices align with current strengths and offer clear upskilling paths. Focus on closing core gaps noted above.</p>
-      </Section>
-
-      <Section title="Internship Recommendations">
-        <ul className="nice-list">
-          <li>Frontend / React Intern • Emphasize projects, responsive UI, component patterns.</li>
-          <li>Full‑stack MERN Intern • Showcase CRUD apps, auth, and API design.</li>
-          <li>QA / Automation Intern • Demonstrate test cases, Cypress/Selenium basics.</li>
-          <li>Data Analyst Intern • Highlight Excel/SQL, small dashboards, EDA notebooks.</li>
-          <li>Business Analyst Intern • Requirements drafting, wireframes, stakeholder docs.</li>
-          <li>DevOps Intern • Docker basics, CI/CD toy pipeline, IaC curiosity.</li>
-        </ul>
-        <p className="small">Target startups and mid-size firms for broader exposure; tailor resume to measurable outcomes and projects.</p>
-      </Section>
-
-      <Section title="Final Summary">
-        <p>
-          Overall level: <strong>{behavior.accuracy >= 70 ? "Strong" : behavior.accuracy >= 50 ? "Average" : "Developing"}</strong>. Strongest opportunity: {strengths[0] || "foundation building"}. Critical first fixes: {weaknesses.slice(0,2).join(", ") || "reinforce fundamentals"}. Keep a steady routine, track mistakes, and expect visible improvement within 6–8 weeks.
-        </p>
-      </Section>
-
-      {profile && (
-        <Section title="Academic Profile (Provided)">
-          <ul className="nice-list">
-            <li>10th: {profile.tenth_percentage || "—"}</li>
-            <li>12th: {profile.twelfth_percentage || "—"}</li>
-            <li>Degree %/CGPA: {profile.degree_percentage_or_cgpa || "—"}</li>
-          </ul>
+        <Section title="Personalized 6-Week Improvement Plan">
+          <ol className="space-y-4 text-lg list-decimal list-inside font-bold">
+            <li className="pl-2">Weeks 1–2: Quantitative basics (percentages, ratios, arithmetic) • Daily 30 MCQs • Resource: GFG Aptitude, Khan Academy.</li>
+            <li className="pl-2">Weeks 1–2 (Parallel): Reasoning (series, syllogisms, seating, data sufficiency) • Daily 20 MCQs • Resource: IndiaBix Reasoning.</li>
+            <li className="pl-2">Weeks 3–4: Coding fundamentals (time/space, arrays, strings, hashing) • 3 problems/day • Resource: LeetCode Easy/Medium.</li>
+            <li className="pl-2">Week 4: OOPs, DBMS, OS quick notes • 1 hr/day • Resource: InterviewBit CS notes.</li>
+            <li className="pl-2">Weeks 5–6: Mixed mocks: 30Q timed sets • Post-test error log • Target accuracy +10%.</li>
+            <li className="pl-2">Routine: 60–90 mins daily • Review all wrong answers same day • Maintain a mistakes journal.</li>
+          </ol>
         </Section>
-      )}
 
-      <div className="actions">
-        <button className="btn btn-primary" onClick={() => navigate("/")}>Finish</button>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <Section title="Career Guidance">
+            <ul className="space-y-3 text-lg">
+              <li className="flex items-start"><span className="bg-black text-white px-2 mr-2 text-sm mt-1">DEV</span><span><strong>Full‑stack / Frontend:</strong> Good fit if UI and JS fundamentals appeal. Improve DSA basics and project depth.</span></li>
+              <li className="flex items-start"><span className="bg-black text-white px-2 mr-2 text-sm mt-1">DATA</span><span><strong>Data Analytics:</strong> Consider if quantitative accuracy trends up. Learn Excel→SQL→Python→Tableau pipeline.</span></li>
+              <li className="flex items-start"><span className="bg-black text-white px-2 mr-2 text-sm mt-1">QA</span><span><strong>QA / SDET Foundations:</strong> Strong for detail-oriented profiles. Learn testing frameworks and automation basics.</span></li>
+              <li className="flex items-start"><span className="bg-black text-white px-2 mr-2 text-sm mt-1">BIZ</span><span><strong>Business Analyst (Tech):</strong> Blend of reasoning + communication. Practice case studies and SQL basics.</span></li>
+              <li className="flex items-start"><span className="bg-black text-white px-2 mr-2 text-sm mt-1">OPS</span><span><strong>DevOps Foundations:</strong> If systems interest you. Learn Linux, Git, CI/CD basics; scripting fundamentals.</span></li>
+            </ul>
+            <p className="mt-4 text-sm font-bold border-t-2 border-black pt-2">Why: choices align with current strengths and offer clear upskilling paths. Focus on closing core gaps noted above.</p>
+          </Section>
+
+          <Section title="Internship Recommendations">
+            <ul className="space-y-3 text-lg">
+              <li className="flex items-center"><div className="w-2 h-2 bg-black mr-3"></div>Frontend / React Intern • Emphasize projects, responsive UI, component patterns.</li>
+              <li className="flex items-center"><div className="w-2 h-2 bg-black mr-3"></div>Full‑stack MERN Intern • Showcase CRUD apps, auth, and API design.</li>
+              <li className="flex items-center"><div className="w-2 h-2 bg-black mr-3"></div>QA / Automation Intern • Demonstrate test cases, Cypress/Selenium basics.</li>
+              <li className="flex items-center"><div className="w-2 h-2 bg-black mr-3"></div>Data Analyst Intern • Highlight Excel/SQL, small dashboards, EDA notebooks.</li>
+              <li className="flex items-center"><div className="w-2 h-2 bg-black mr-3"></div>Business Analyst Intern • Requirements drafting, wireframes, stakeholder docs.</li>
+              <li className="flex items-center"><div className="w-2 h-2 bg-black mr-3"></div>DevOps Intern • Docker basics, CI/CD toy pipeline, IaC curiosity.</li>
+            </ul>
+            <p className="mt-4 text-sm font-bold border-t-2 border-black pt-2">Target startups and mid-size firms for broader exposure; tailor resume to measurable outcomes and projects.</p>
+          </Section>
+        </div>
+
+        <Section title="Final Summary">
+          <p className="text-xl leading-relaxed">
+            Overall level: <strong className="bg-yellow-300 px-2">{behavior.accuracy >= 70 ? "Strong" : behavior.accuracy >= 50 ? "Average" : "Developing"}</strong>.
+            Strongest opportunity: <strong>{strengths[0] || "foundation building"}</strong>.
+            Critical first fixes: <strong>{weaknesses.slice(0, 2).join(", ") || "reinforce fundamentals"}</strong>.
+            Keep a steady routine, track mistakes, and expect visible improvement within 6–8 weeks.
+          </p>
+        </Section>
+
+        {profile && (
+          <Section title="Academic Profile (Provided)">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+              <div className="brutal-border p-4 bg-gray-50">
+                <div className="text-sm font-bold uppercase mb-1">10TH GRADE</div>
+                <div className="text-xl font-black">{profile.tenth_percentage || "—"}</div>
+              </div>
+              <div className="brutal-border p-4 bg-gray-50">
+                <div className="text-sm font-bold uppercase mb-1">12TH GRADE</div>
+                <div className="text-xl font-black">{profile.twelfth_percentage || "—"}</div>
+              </div>
+              <div className="brutal-border p-4 bg-gray-50">
+                <div className="text-sm font-bold uppercase mb-1">DEGREE/CGPA</div>
+                <div className="text-xl font-black">{profile.degree_percentage_or_cgpa || "—"}</div>
+              </div>
+            </div>
+          </Section>
+        )}
+
+        <div className="flex justify-center mt-12 mb-12">
+          <button className="brutal-btn brutal-btn-primary text-2xl px-12 py-6" onClick={() => navigate("/")}>FINISH & RETURN HOME</button>
+        </div>
       </div>
     </div>
   );
