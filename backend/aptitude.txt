@@ -1,0 +1,405 @@
+Beginner (40)
+
+If 25% of a number is 30, the number is:
+A) 90 B) 100 C) 110 D) 120
+Answer: D
+
+15% of 200 is:
+A) 20 B) 25 C) 30 D) 35
+Answer: C
+
+A shopkeeper marks an item at ₹800 and gives 10% discount. Selling price:
+A) ₹720 B) ₹740 C) ₹760 D) ₹780
+Answer: C
+
+Ratio 3:5 equals fraction:
+A) 3/8 B) 3/5 C) 5/3 D) 3/10
+Answer: A
+
+Average of 12, 18, 24:
+A) 16 B) 17 C) 18 D) 19
+Answer: C
+
+Simple interest on ₹1000 at 6% per annum for 2 years:
+A) ₹60 B) ₹100 C) ₹120 D) ₹160
+Answer: C
+
+If A does a job in 6 days, B in 12 days, together they take:
+A) 3 B) 4 C) 5 D) 6
+Answer: B
+
+Speed 60 km/h for 2 hours. Distance:
+A) 90 B) 100 C) 110 D) 120
+Answer: D
+
+HCF of 24 and 36:
+A) 6 B) 8 C) 12 D) 18
+Answer: C
+
+LCM of 8 and 12:
+A) 12 B) 16 C) 24 D) 48
+Answer: C
+
+If CP = ₹500 and SP = ₹575, profit %:
+A) 12% B) 13% C) 14% D) 15%
+Answer: D
+
+A bag has 5 red and 3 blue balls. Probability of red:
+A) 3/8 B) 5/8 C) 1/2 D) 5/16
+Answer: B
+
+Convert 0.2 to percentage:
+A) 2% B) 20% C) 25% D) 200%
+Answer: B
+
+3/4 of 64:
+A) 36 B) 42 C) 46 D) 48
+Answer: D
+
+10:15 reduced:
+A) 2:3 B) 3:5 C) 4:5 D) 1:2
+Answer: A
+
+A train 120 m long at 60 km/h crosses a pole in:
+A) 4 s B) 6 s C) 7.2 s D) 12 s
+Answer: C
+
+If SP = ₹900 at 20% loss, CP:
+A) ₹1000 B) ₹1080 C) ₹1125 D) ₹1200
+Answer: C
+
+Average of first five natural numbers:
+A) 2 B) 2.5 C) 3 D) 3.5
+Answer: D
+
+If x% of 200 = 50, x =:
+A) 20 B) 22.5 C) 25 D) 30
+Answer: C
+
+Time taken to cover 150 km at 50 km/h:
+A) 2 h B) 2.5 h C) 3 h D) 4 h
+Answer: C
+
+If 12 workers finish a task in 10 days, 6 workers take:
+A) 10 B) 15 C) 20 D) 24
+Answer: C
+
+Compound ratio of 2:3 and 4:5:
+A) 6:20 B) 8:15 C) 3:5 D) 2:5
+Answer: B
+
+Selling price at 25% profit if CP = ₹240:
+A) ₹280 B) ₹300 C) ₹320 D) ₹360
+Answer: B
+
+If x:y = 4:5 and y:z = 6:7, then x:z:
+A) 12:35 B) 24:35 C) 12:21 D) 24:21
+Answer: B
+
+A, B share ₹600 in ratio 2:3. A gets:
+A) ₹200 B) ₹220 C) ₹240 D) ₹260
+Answer: C
+
+If 30% of a number is 42, the number:
+A) 120 B) 130 C) 140 D) 150
+Answer: C
+
+Pipes A and B fill a tank in 12 h and 18 h. Together:
+A) 6 h B) 7.2 h C) 8 h D) 9 h
+Answer: B
+
+20% successive discount followed by 10% equals single discount:
+A) 28% B) 30% C) 32% D) 34%
+Answer: A
+
+Average of 30 and 50 after adding 40:
+A) 37.5 B) 40 C) 42.5 D) 45
+Answer: B
+
+If CP = ₹800 and loss = 12.5%, SP:
+A) ₹680 B) ₹700 C) ₹720 D) ₹740
+Answer: C
+
+A car covers 180 km in 3 h. Average speed:
+A) 50 B) 55 C) 60 D) 65
+Answer: C
+
+Probability of getting a prime on a fair die:
+A) 1/6 B) 1/3 C) 1/2 D) 2/3
+Answer: C
+
+Simplify 40% of 250:
+A) 80 B) 90 C) 95 D) 100
+Answer: B
+
+If 8 men do a job in 15 days, men needed to finish in 10 days:
+A) 10 B) 12 C) 15 D) 16
+Answer: B
+
+Compound amount on ₹1000 at 10% for 2 years:
+A) ₹1100 B) ₹1200 C) ₹1210 D) ₹1220
+Answer: C
+
+The angle between clock hands at 3:00:
+A) 60° B) 75° C) 90° D) 105°
+Answer: C
+
+LCM of 9, 12, 15:
+A) 90 B) 120 C) 180 D) 240
+Answer: C
+
+Selling price at 15% gain if CP ₹340:
+A) ₹374 B) ₹391 C) ₹400 D) ₹425
+Answer: B
+
+Mixture: 3 liters milk, 1 liter water. Milk ratio:
+A) 1/3 B) 1/4 C) 3/4 D) 2/3
+Answer: C
+
+If 5 men or 8 women can do a job in 12 days, 10 women take:
+A) 9.6 B) 12 C) 15 D) 19.2
+Answer: A
+
+Intermediate (30)
+
+Train A 300 m at 54 km/h crosses train B 200 m at 36 km/h opposite directions in:
+A) 16 s B) 20 s C) 24 s D) 30 s
+Answer: B
+
+Principal ₹5000 at 8% CI for 2 years:
+A) ₹5832 B) ₹5800 C) ₹5720 D) ₹5600
+Answer: A
+
+A, B, C share profit in ratio of investments 2:3:5 over same time. If profit ₹1,00,000, C gets:
+A) ₹20,000 B) ₹30,000 C) ₹50,000 D) ₹60,000
+Answer: C
+
+Boat speed in still water 12 km/h, stream 3 km/h. Upstream speed:
+A) 8 B) 9 C) 12 D) 15
+Answer: B
+
+Two successive discounts of 20% and 25% equal single discount:
+A) 40% B) 42% C) 45% D) 50%
+Answer: B
+
+Work: A in 10 days, B in 15, A works 3 days then B finishes. Total days:
+A) 8 B) 9 C) 10 D) 12
+Answer: B
+
+A mixture has milk:water = 5:3. Add 8 liters water to make it 5:5. Initial mixture volume:
+A) 16 B) 20 C) 24 D) 32
+Answer: C
+
+If 20% of x equals 25% of y, then x:y:
+A) 4:5 B) 5:4 C) 1:1 D) 2:5
+Answer: B
+
+Compound interest on ₹8000 at 12.5% for 2 years:
+A) ₹2000 B) ₹2125 C) ₹2250 D) ₹2400
+Answer: C
+
+Train 150 m crosses platform 350 m at 72 km/h in:
+A) 16 s B) 20 s C) 25 s D) 30 s
+Answer: C
+
+Probability of drawing 2 aces from a deck without replacement:
+A) 1/221 B) 1/169 C) 1/1326 D) 6/1326
+Answer: A
+
+If a number increased by 20% then decreased by 20%, net change:
+A) 0% B) 2% decrease C) 4% decrease D) 4% increase
+Answer: C
+
+Pipes A, B fill in 12 h and 15 h; outlet C empties in 20 h. All open. Time to fill:
+A) 10 h B) 12 h C) 15 h D) 20 h
+Answer: A
+
+Simple interest rate if ₹4000 becomes ₹4600 in 3 years:
+A) 4% B) 5% C) 6% D) 7%
+Answer: B
+
+If SP after 10% loss is ₹450, CP:
+A) ₹475 B) ₹480 C) ₹500 D) ₹520
+Answer: C
+
+Average of 7 numbers is 18. If one number 24 replaced by 14, new average:
+A) 16.5 B) 17 C) 17.5 D) 18
+Answer: B
+
+Two numbers are in ratio 7:9 and their LCM is 252. The smaller number is:
+A) 14 B) 18 C) 28 D) 36
+Answer: C
+
+Train of length 180 m passes a man walking at 6 km/h in same direction in 18 s. Train speed:
+A) 36 km/h B) 45 km/h C) 54 km/h D) 60 km/h
+Answer: C
+
+A can finish a work in 12 days, B in 18 days. They work alternately starting with A. Days needed:
+A) 12 B) 13 C) 14 D) 15
+Answer: C
+
+If (x/3) + (y/4) = 7 and (x/5) + (y/6) = 5, x + y =
+A) 30 B) 32 C) 34 D) 36
+Answer: D
+
+Area of a circle with radius 7 cm (π = 22/7):
+A) 132 B) 154 C) 176 D) 196
+Answer: B
+
+If SP = ₹1260 after successive discounts 10% and 5%, marked price:
+A) ₹1400 B) ₹1450 C) ₹1500 D) ₹1600
+Answer: C
+
+Mixture of 40 L with milk:water 3:1. How much water to add to make 3:2?
+A) 4 L B) 5 L C) 6 L D) 8 L
+Answer: B
+
+Number of permutations of the word “LETTER”:
+A) 180 B) 240 C) 360 D) 720
+Answer: C
+
+A sum doubles at SI in 12 years. Rate per annum:
+A) 6% B) 8% C) 10% D) 12%
+Answer: C
+
+If the average of 9 numbers is 45 and the average of first 5 is 40, average of last 4:
+A) 48.75 B) 50 C) 52.5 D) 55
+Answer: C
+
+A car travels 300 km at 60 km/h and returns 300 km at 75 km/h. Average speed:
+A) 66 B) 66.67 C) 67.5 D) 70
+Answer: B
+
+If cost price decreases by 20% and selling price decreases by 10%, original profit 25%, new profit:
+A) 10% B) 20% C) 30% D) 40%
+Answer: D
+
+Time for a tap to fill a tank alone if with another tap it fills in 6 h and the second alone in 9 h:
+A) 10.8 h B) 12 h C) 14.4 h D) 18 h
+Answer: C
+
+Present ages in ratio 4:5. After 6 years ratio 5:6. Younger’s current age:
+A) 16 B) 18 C) 20 D) 24
+Answer: C
+
+If 3 men or 5 boys can do a job in 30 days, 6 men and 5 boys take:
+A) 10 B) 12 C) 15 D) 18
+Answer: B
+
+A sum of ₹10,000 at 20% compounded half-yearly for 1 year amounts to:
+A) 11,900 B) 12,000 C) 12,100 D) 12,400
+Answer: D
+
+If the average of x, x+2, x+4, x+6, x+8 is 20, then x:
+A) 10 B) 12 C) 14 D) 16
+Answer: B
+
+A person walks 2 km north, 3 km east, 2 km south. Distance from start:
+A) 1 km B) 2 km C) 3 km D) 5 km
+Answer: B
+
+Two dice thrown. Probability sum equals 9:
+A) 1/9 B) 1/8 C) 1/6 D) 1/12
+Answer: C
+
+Advanced (30)
+
+A train 240 m at 72 km/h crosses a platform in 20 s. Platform length:
+A) 120 m B) 160 m C) 200 m D) 240 m
+Answer: C
+
+A sum amounts to ₹12,100 at 10% CI in 2 years. Principal:
+A) 10,000 B) 10,500 C) 11,000 D) 11,500
+Answer: A
+
+Two pipes fill a tank in 12 h and 18 h; third empties in 36 h. All open. Time to fill:
+A) 9 h B) 10 h C) 12 h D) 15 h
+Answer: B
+
+A and B invest ₹20,000 and ₹30,000. After 6 months A adds ₹10,000. Total profit ₹18,000. A’s share:
+A) 8,000 B) 9,000 C) 10,000 D) 12,000
+Answer: B
+
+A man buys an article at 20% discount on marked price and sells at 25% above cost. Net effect on MP:
+A) 0% B) 5% gain C) 10% gain D) Cannot be determined
+Answer: C
+
+A boat goes 45 km downstream in 3 h and the same distance upstream in 5 h. Still-water speed:
+A) 12 B) 13.5 C) 15 D) 18
+Answer: B
+
+A mixture has milk:water 7:5. How much of the mixture must be replaced with milk to make 7:3 in 60 L?
+A) 8 L B) 10 L C) 12 L D) 15 L
+Answer: C
+
+If a number is increased by 20% and then by 30%, by what percent should it be reduced to get original?
+A) 38.46% B) 41.67% C) 42.86% D) 50%
+Answer: B
+
+Two trains 200 m and 300 m at 72 km/h and 54 km/h in same direction. Time to cross each other:
+A) 36 s B) 40 s C) 48 s D) 60 s
+Answer: C
+
+If PnC: Number of ways to arrange letters of “MISSISSIPPI”:
+A) 34650 B) 34650/2 C) 34650/3 D) 34650/11
+Answer: A
+
+From 52 cards, probability of drawing 1 heart and 1 spade in 2 draws without replacement:
+A) 13/102 B) 13/204 C) 169/2652 D) 26/663
+Answer: D
+
+A trader marks goods 50% above CP and offers successive discounts 20% and 10%. Profit %:
+A) 12% B) 15% C) 20% D) 25%
+Answer: B
+
+A completes a work in 8 days, B in 12. With C they finish in 4 days. C alone would finish in:
+A) 12 B) 16 C) 24 D) 48
+Answer: C
+
+Speed of the stream if upstream 20 km in 5 h and downstream 30 km in 3 h:
+A) 2 B) 3 C) 4 D) 5
+Answer: B
+
+Train passes a platform in 30 s and a pole in 18 s at constant speed. Platform length if train is 180 m:
+A) 80 B) 100 C) 120 D) 150
+Answer: D
+
+Two equal sums at SI: one at 6% and other at 8% for 5 years. Difference in interest is ₹200. Each sum:
+A) 1000 B) 1500 C) 2000 D) 2500
+Answer: C
+
+If cost price is 80% of selling price, profit %:
+A) 20 B) 25 C) 30 D) 33.33
+Answer: D
+
+A and B together can do a job in 6 days. A alone does it in 10 days. B alone:
+A) 12 B) 15 C) 20 D) 30
+Answer: C
+
+Clock problem: At what time between 2 and 3 will the hands be opposite?
+A) 2:32 8/11 B) 2:34 6/11 C) 2:36 4/11 D) 2:38 2/11
+Answer: A
+
+A person covers 120 km at x km/h and returns at (x+20) km/h. Average speed for the round trip:
+A) 2x+20 B) 2x+10 C) 2x(x+20)/(2x+20) D) 2x(x+20)/(2x+20) simplified
+Answer: C
+
+If 3x + 2y = 22 and 2x + 3y = 23, value of x:
+A) 3 B) 4 C) 5 D) 6
+Answer: B
+
+Two pipes fill a tank in 10 h and 15 h; a leak empties 1/30 of the tank per hour. Net time to fill:
+A) 9 B) 10 C) 12 D) 15
+Answer: A
+
+In how many ways can 5 people sit around a circular table?
+A) 12 B) 16 C) 20 D) 24
+Answer: D
+
+A sum triples in 10 years at CI. Approx annual rate:
+A) 10% B) 11% C) 12% D) 15%
+Answer: C
+
+From digits 1–6 without repetition, how many 3-digit even numbers:
+A) 24 B) 36 C) 48 D) 60
+Answer: C
