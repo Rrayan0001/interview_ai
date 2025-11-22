@@ -446,24 +446,12 @@ function QuestionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white p-6">
-      {saving && <LoadingOverlay text="SELECTING THE BEST QUESTIONS FOR YOU..." />}
-      
-      <div className="mx-auto max-w-4xl">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-6xl font-black uppercase tracking-wider mb-4">
-            SKILL LEVELS
-          </h1>
-          <div className="brutal-border brutal-shadow bg-yellow-300 p-4 max-w-2xl mx-auto">
-            <p className="text-xl font-bold uppercase tracking-wide">
-              CHOOSE YOUR POWER LEVEL → GET CUSTOM QUESTIONS
-            </p>
-          </div>
-        </motion.div>
+    <div className="container">
+      {saving && <LoadingOverlay text="Selecting the best questions for you…" />}
+      <header className="page-head">
+        <h1>Choose Your Skill Levels</h1>
+        <p>We tailor the exam based on your comfort level.</p>
+      </header>
 
       <form className="card levels" onSubmit={onSubmit}>
         <div className="levels-grid">
