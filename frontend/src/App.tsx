@@ -446,46 +446,115 @@ function QuestionsPage() {
   }
 
   return (
-    <div className="container">
-      {saving && <LoadingOverlay text="Selecting the best questions for you…" />}
-      <header className="page-head">
-        <h1>Choose Your Skill Levels</h1>
-        <p>We tailor the exam based on your comfort level.</p>
-      </header>
+    <div className="min-h-screen bg-white p-6">
+      {saving && <LoadingOverlay text="SELECTING THE BEST QUESTIONS FOR YOU..." />}
+      
+      <div className="mx-auto max-w-4xl">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-12"
+        >
+          <h1 className="text-6xl font-black uppercase tracking-wider mb-4">
+            SKILL LEVELS
+          </h1>
+          <div className="brutal-border brutal-shadow bg-yellow-300 p-4 max-w-2xl mx-auto">
+            <p className="text-xl font-bold uppercase tracking-wide">
+              CHOOSE YOUR POWER LEVEL → GET CUSTOM QUESTIONS
+            </p>
+          </div>
+        </motion.div>
 
-      <form className="card levels" onSubmit={onSubmit}>
-        <div className="levels-grid">
-          <div className="skill-card">
-            <div className="skill-card-header">Aptitude</div>
-            <div className="pill-group">
-              {["beginner", "intermediate", "advance"].map((o) => (
-                <button type="button" className={`pill ${aptitude === o ? "active" : ""}`} key={o} onClick={() => setAptitude(o)}>
-                  {o.charAt(0).toUpperCase() + o.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="skill-card">
-            <div className="skill-card-header">Reasoning</div>
-            <div className="pill-group">
-              {["beginner", "intermediate", "advance"].map((o) => (
-                <button type="button" className={`pill ${reasoning === o ? "active" : ""}`} key={o} onClick={() => setReasoning(o)}>
-                  {o.charAt(0).toUpperCase() + o.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="skill-card">
-            <div className="skill-card-header">Coding</div>
-            <div className="pill-group">
-              {["beginner", "intermediate", "advance"].map((o) => (
-                <button type="button" className={`pill ${coding === o ? "active" : ""}`} key={o} onClick={() => setCoding(o)}>
-                  {o.charAt(0).toUpperCase() + o.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <Card className="mb-8">
+            <CardContent className="p-8">
+              <form onSubmit={onSubmit} className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {/* Aptitude */}
+                  <div className="brutal-border brutal-shadow-lg p-6 bg-blue-100">
+                    <div className="flex items-center mb-6">
+                      <div className="brutal-border brutal-shadow p-3 bg-black mr-4">
+                        <BarChart3 className="h-8 w-8 text-white" />
+                      </div>
+                      <h3 className="text-2xl font-black uppercase">APTITUDE</h3>
+                    </div>
+                    <div className="space-y-3">
+                      {["beginner", "intermediate", "advance"].map((level) => (
+                        <button
+                          key={level}
+                          type="button"
+                          onClick={() => setAptitude(level)}
+                          className={cn(
+                            "w-full brutal-border brutal-shadow p-4 font-bold uppercase tracking-wide transition-all",
+                            aptitude === level 
+                              ? "bg-black text-white transform translate-x-1 translate-y-1" 
+                              : "bg-white text-black hover:transform hover:translate-x-0.5 hover:translate-y-0.5"
+                          )}
+                        >
+                          {level}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Reasoning */}
+                  <div className="brutal-border brutal-shadow-lg p-6 bg-green-100">
+                    <div className="flex items-center mb-6">
+                      <div className="brutal-border brutal-shadow p-3 bg-black mr-4">
+                        <Brain className="h-8 w-8 text-white" />
+                      </div>
+                      <h3 className="text-2xl font-black uppercase">REASONING</h3>
+                    </div>
+                    <div className="space-y-3">
+                      {["beginner", "intermediate", "advance"].map((level) => (
+                        <button
+                          key={level}
+                          type="button"
+                          onClick={() => setReasoning(level)}
+                          className={cn(
+                            "w-full brutal-border brutal-shadow p-4 font-bold uppercase tracking-wide transition-all",
+                            reasoning === level 
+                              ? "bg-black text-white transform translate-x-1 translate-y-1" 
+                              : "bg-white text-black hover:transform hover:translate-x-0.5 hover:translate-y-0.5"
+                          )}
+                        >
+                          {level}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Coding */}
+                  <div className="brutal-border brutal-shadow-lg p-6 bg-purple-100">
+                    <div className="flex items-center mb-6">
+                      <div className="brutal-border brutal-shadow p-3 bg-black mr-4">
+                        <Code className="h-8 w-8 text-white" />
+                      </div>
+                      <h3 className="text-2xl font-black uppercase">CODING</h3>
+                    </div>
+                    <div className="space-y-3">
+                      {["beginner", "intermediate", "advance"].map((level) => (
+                        <button
+                          key={level}
+                          type="button"
+                          onClick={() => setCoding(level)}
+                          className={cn(
+                            "w-full brutal-border brutal-shadow p-4 font-bold uppercase tracking-wide transition-all",
+                            coding === level 
+                              ? "bg-black text-white transform translate-x-1 translate-y-1" 
+                              : "bg-white text-black hover:transform hover:translate-x-0.5 hover:translate-y-0.5"
+                          )}
+                        >
+                          {level}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
         <div className="actions">
           <button className="btn btn-primary" type="submit" disabled={saving}>Continue</button>
           <button className="btn-ghost" type="button" onClick={() => navigate("/")}>Back</button>
