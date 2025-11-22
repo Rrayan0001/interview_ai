@@ -444,66 +444,98 @@ function QuestionsPage() {
     if (!selected) return;
     navigate("/instructions", { state: { userId, selected, parsed } });
   }
-
   return (
-    <div className="container">
-      {saving && <LoadingOverlay text="Selecting the best questions for you…" />}
-      <header className="page-head">
-        <h1>Choose Your Skill Levels</h1>
-        <p>We tailor the exam based on your comfort level.</p>
-      </header>
+    <div className="min-h-screen bg-white p-6">
+      {saving && <LoadingOverlay text="SELECTING THE BEST QUESTIONS FOR YOU..." />}
+      
+      <div className="mx-auto max-w-4xl">
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
+          <h1 className="text-6xl font-black uppercase tracking-wider mb-4">SKILL LEVELS</h1>
+          <div className="brutal-border brutal-shadow bg-yellow-300 p-4 max-w-2xl mx-auto">
+            <p className="text-xl font-bold uppercase tracking-wide">CHOOSE YOUR POWER LEVEL → GET CUSTOM QUESTIONS</p>
+          </div>
+        </motion.div>
 
-      <form className="card levels" onSubmit={onSubmit}>
-        <div className="levels-grid">
-          <div className="skill-card">
-            <div className="skill-card-header">Aptitude</div>
-            <div className="pill-group">
-              {["beginner", "intermediate", "advance"].map((o) => (
-                <button type="button" className={`pill ${aptitude === o ? "active" : ""}`} key={o} onClick={() => setAptitude(o)}>
-                  {o.charAt(0).toUpperCase() + o.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="skill-card">
-            <div className="skill-card-header">Reasoning</div>
-            <div className="pill-group">
-              {["beginner", "intermediate", "advance"].map((o) => (
-                <button type="button" className={`pill ${reasoning === o ? "active" : ""}`} key={o} onClick={() => setReasoning(o)}>
-                  {o.charAt(0).toUpperCase() + o.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="skill-card">
-            <div className="skill-card-header">Coding</div>
-            <div className="pill-group">
-              {["beginner", "intermediate", "advance"].map((o) => (
-                <button type="button" className={`pill ${coding === o ? "active" : ""}`} key={o} onClick={() => setCoding(o)}>
-                  {o.charAt(0).toUpperCase() + o.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="actions">
-          <button className="btn btn-primary" type="submit" disabled={saving}>Continue</button>
-          <button className="btn-ghost" type="button" onClick={() => navigate("/")}>Back</button>
-        </div>
-        {msg && <div className="info">{msg}</div>}
-        {err && <div className="error">{err}</div>}
-      </form>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <Card className="mb-8">
+            <CardContent className="p-8">
+              <form onSubmit={onSubmit} className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div className="brutal-border brutal-shadow-lg p-6 bg-blue-100">
+                    <div className="flex items-center mb-6">
+                      <div className="brutal-border brutal-shadow p-3 bg-black mr-4">
+                        <BarChart3 className="h-8 w-8 text-white" />
+                      </div>
+                      <h3 className="text-2xl font-black uppercase">APTITUDE</h3>
+                    </div>
+                    <div className="space-y-3">
+                      {["beginner", "intermediate", "advance"].map((level) => (
+                        <button key={level} type="button" onClick={() => setAptitude(level)} className={cn("w-full brutal-border brutal-shadow p-4 font-bold uppercase tracking-wide transition-all", aptitude === level ? "bg-black text-white transform translate-x-1 translate-y-1" : "bg-white text-black hover:transform hover:translate-x-0.5 hover:translate-y-0.5")}>{level}</button>
+                      ))}
+                    </div>
+                  </div>
 
-      {ready && (
-        <section className="card ready-card">
-          <h2>Profile Ready</h2>
-          <p>We’ve prepared your personalized question set.</p>
-          <button className="btn btn-primary" onClick={toInstructions}>Continue to Instructions</button>
-        </section>
-      )}
+                  <div className="brutal-border brutal-shadow-lg p-6 bg-green-100">
+                    <div className="flex items-center mb-6">
+                      <div className="brutal-border brutal-shadow p-3 bg-black mr-4">
+                        <Brain className="h-8 w-8 text-white" />
+                      </div>
+                      <h3 className="text-2xl font-black uppercase">REASONING</h3>
+                    </div>
+                    <div className="space-y-3">
+                      {["beginner", "intermediate", "advance"].map((level) => (
+                        <button key={level} type="button" onClick={() => setReasoning(level)} className={cn("w-full brutal-border brutal-shadow p-4 font-bold uppercase tracking-wide transition-all", reasoning === level ? "bg-black text-white transform translate-x-1 translate-y-1" : "bg-white text-black hover:transform hover:translate-x-0.5 hover:translate-y-0.5")}>{level}</button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="brutal-border brutal-shadow-lg p-6 bg-purple-100">
+                    <div className="flex items-center mb-6">
+                      <div className="brutal-border brutal-shadow p-3 bg-black mr-4">
+                        <Code className="h-8 w-8 text-white" />
+                      </div>
+                      <h3 className="text-2xl font-black uppercase">CODING</h3>
+                    </div>
+                    <div className="space-y-3">
+                      {["beginner", "intermediate", "advance"].map((level) => (
+                        <button key={level} type="button" onClick={() => setCoding(level)} className={cn("w-full brutal-border brutal-shadow p-4 font-bold uppercase tracking-wide transition-all", coding === level ? "bg-black text-white transform translate-x-1 translate-y-1" : "bg-white text-black hover:transform hover:translate-x-0.5 hover:translate-y-0.5")}>{level}</button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 justify-center">
+                  <Button variant="outline" type="button" onClick={() => navigate("/")} size="lg"><ArrowLeft className="h-5 w-5 mr-2" />BACK</Button>
+                  <Button type="submit" disabled={saving} size="lg" className="text-xl px-12">{saving ? "GENERATING..." : "CONTINUE"}<ArrowRight className="h-5 w-5 ml-2" /></Button>
+                </div>
+
+                {msg && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="brutal-border brutal-shadow bg-green-100 p-6 text-center"><p className="text-xl font-bold uppercase text-green-700">{msg}</p></motion.div>}
+                {err && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="brutal-border brutal-shadow bg-red-100 p-6"><div className="flex items-center justify-center"><div className="brutal-border p-2 bg-red-500 mr-4"><AlertCircle className="h-5 w-5 text-white" /></div><p className="text-xl font-bold uppercase">{err}</p></div></motion.div>}
+              </form>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {ready && (
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 }} className="brutal-bounce">
+            <Card>
+              <CardContent className="p-8 text-center">
+                <div className="brutal-border brutal-shadow-lg p-6 bg-green-500 mb-6 mx-auto w-fit">
+                  <CheckCircle className="h-16 w-16 text-white" />
+                </div>
+                <h2 className="text-4xl font-black uppercase mb-4">PROFILE READY!</h2>
+                <p className="text-xl font-bold uppercase tracking-wide mb-8">YOUR PERSONALIZED QUESTION SET IS PREPARED</p>
+                <Button onClick={toInstructions} size="lg" className="text-xl px-12">CONTINUE TO INSTRUCTIONS<ArrowRight className="h-5 w-5 ml-3" /></Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 }
+
+
 
 // -------------------- Instructions Page (/instructions) --------------------
 
@@ -511,47 +543,68 @@ function InstructionsPage() {
   const location = useLocation() as any;
   const navigate = useNavigate();
   const userId: string | undefined = location?.state?.userId;
-
   return (
-    <div className="container">
-      <header className="page-head">
-        <h1>Test Instructions</h1>
-        <p>Read all instructions carefully before starting the assessment.</p>
-      </header>
-      <section className="card">
-        <details open>
-          <summary><strong>General Guidelines</strong></summary>
-          <p>Ensure a stable internet connection. Do not refresh the page during the test. Keep your device charged.</p>
-        </details>
-        <details>
-          <summary><strong>Aptitude Test</strong></summary>
-          <p>10 questions, multiple choice. Choose the best answer.</p>
-        </details>
-        <details>
-          <summary><strong>Logical Reasoning Test</strong></summary>
-          <p>10 questions focusing on analytical and logical skills.</p>
-        </details>
-        <details>
-          <summary><strong>Coding Test</strong></summary>
-          <p>10 questions assessing fundamentals and problem-solving.</p>
-        </details>
-        <details>
-          <summary><strong>Important Notes</strong></summary>
-          <ul>
-            <li>The timer (30 minutes) starts once you begin the test.</li>
-            <li>You cannot pause the test once started.</li>
-            <li>Submit before time runs out to save your answers.</li>
-          </ul>
-        </details>
-      </section>
-      <section className="card" style={{ background: "#ecfdf5", borderColor: "#bbf7d0" }}>
-        <h3>Ready to Start?</h3>
-        <p>Once you click <strong>Start Test</strong>, the timer will begin and cannot be paused.</p>
-        <div className="actions">
-          <button className="btn-ghost" onClick={() => navigate("/questions", { state: { userId, parsed: location?.state?.parsed } })}>Back</button>
-          <button className="btn btn-primary" onClick={() => navigate("/test", { state: { userId, selected: location?.state?.selected, parsed: location?.state?.parsed } })}>Start Test</button>
-        </div>
-      </section>
+    <div className="min-h-screen bg-white p-6">
+      <div className="mx-auto max-w-4xl">
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
+          <h1 className="text-6xl font-black uppercase tracking-wider mb-4">TEST INSTRUCTIONS</h1>
+          <div className="brutal-border brutal-shadow bg-yellow-300 p-4 max-w-2xl mx-auto">
+            <p className="text-xl font-bold uppercase tracking-wide">READ CAREFULLY → PREPARE TO DOMINATE</p>
+          </div>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-6">
+          <Card>
+            <CardHeader className="brutal-border-b-3 border-black">
+              <CardTitle className="flex items-center"><div className="brutal-border brutal-shadow p-2 bg-black mr-4"><AlertCircle className="h-6 w-6 text-white" /></div>GENERAL GUIDELINES</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <ul className="space-y-3 text-lg">
+                <li className="flex items-start"><span className="brutal-border brutal-shadow p-2 bg-black text-white font-bold mr-3 mt-1">→</span><span>Ensure a stable internet connection</span></li>
+                <li className="flex items-start"><span className="brutal-border brutal-shadow p-2 bg-black text-white font-bold mr-3 mt-1">→</span><span>Do NOT refresh the page during the test</span></li>
+                <li className="flex items-start"><span className="brutal-border brutal-shadow p-2 bg-black text-white font-bold mr-3 mt-1">→</span><span>Keep your device charged</span></li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="brutal-border brutal-shadow-lg bg-blue-50">
+              <CardHeader><CardTitle className="text-2xl">APTITUDE</CardTitle></CardHeader>
+              <CardContent><p className="font-bold">10 questions • Multiple choice • Choose the best answer</p></CardContent>
+            </Card>
+            <Card className="brutal-border brutal-shadow-lg bg-green-50">
+              <CardHeader><CardTitle className="text-2xl">REASONING</CardTitle></CardHeader>
+              <CardContent><p className="font-bold">10 questions • Analytical and logical skills</p></CardContent>
+            </Card>
+            <Card className="brutal-border brutal-shadow-lg bg-purple-50">
+              <CardHeader><CardTitle className="text-2xl">CODING</CardTitle></CardHeader>
+              <CardContent><p className="font-bold">10 questions • Fundamentals and problem-solving</p></CardContent>
+            </Card>
+          </div>
+
+          <Card className="brutal-border brutal-shadow-lg bg-red-50">
+            <CardHeader><CardTitle className="flex items-center text-red-700"><Clock className="h-6 w-6 mr-2" />IMPORTANT NOTES</CardTitle></CardHeader>
+            <CardContent>
+              <ul className="space-y-3 text-lg font-bold">
+                <li className="flex items-start"><span className="text-red-600 mr-3">⚠</span><span>The timer (30 minutes) starts once you begin</span></li>
+                <li className="flex items-start"><span className="text-red-600 mr-3">⚠</span><span>You CANNOT pause the test once started</span></li>
+                <li className="flex items-start"><span className="text-red-600 mr-3">⚠</span><span>Submit before time runs out to save answers</span></li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card className="brutal-border-thick brutal-shadow-xl bg-green-100">
+            <CardContent className="p-8 text-center">
+              <h3 className="text-3xl font-black uppercase mb-4">READY TO START?</h3>
+              <p className="text-xl font-bold mb-8">Once you click START TEST, the timer will begin and cannot be paused.</p>
+              <div className="flex gap-4 justify-center">
+                <Button variant="outline" onClick={() => navigate("/questions", { state: { userId, parsed: location?.state?.parsed } })} size="lg"><ArrowLeft className="h-5 w-5 mr-2" />BACK</Button>
+                <Button onClick={() => navigate("/test", { state: { userId, selected: location?.state?.selected, parsed: location?.state?.parsed } })} size="lg" className="text-2xl px-12">START TEST<ArrowRight className="h-5 w-5 ml-3" /></Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
     </div>
   );
 }
