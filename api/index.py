@@ -18,7 +18,7 @@ except Exception as e:
     
     debug_app = FastAPI()
     
-    @debug_app.get("/{path:path}")
+    @debug_app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"])
     def catch_all(path: str):
         return PlainTextResponse(f"Server Startup Error:\n\n{error_trace}", status_code=500)
         
