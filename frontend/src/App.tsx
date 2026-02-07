@@ -47,19 +47,14 @@ type ReportPayload = {
 };
 
 // Get backend URL from environment variable, with fallback
+// Get backend URL
 const getBackendUrl = () => {
-  const envUrl = import.meta.env.VITE_BACKEND_URL as string | undefined;
-
-  // Force Railway URL in production, ignoring localhost if set by mistake
+  // In Vercel, the backend is serverless at /api, so we use relative path
   if (import.meta.env.PROD) {
-    if (!envUrl || envUrl.includes("localhost")) {
-      return "https://web-production-dad96.up.railway.app";
-    }
-    return envUrl;
+    return "/api";
   }
-
-  // For development, use env var or localhost
-  return envUrl || "http://localhost:8000";
+  // For local development
+  return import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
 };
 
 const backendUrl = getBackendUrl();
