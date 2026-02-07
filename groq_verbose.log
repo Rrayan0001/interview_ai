@@ -1,0 +1,2 @@
+[groq] calling model='llama-3.1-8b-instant' for chunk 1/1 (chars=2250)
+[groq] received response: prompt_tokens=577, completion_tokens=500, total_tokens=1077

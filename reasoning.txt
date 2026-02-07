@@ -1,0 +1,489 @@
+# **BEGINNER (40)**
+
+1. Find the odd one out:
+   A) Apple  B) Banana  C) Mango  D) Carrot
+   Answer: D
+
+2. Which number completes the series: 3, 6, 9, 12, __
+   A) 14  B) 15  C) 18  D) 21
+   Answer: B
+
+3. Which word doesn’t belong?
+   A) Chair  B) Table  C) Bench  D) Plate
+   Answer: D
+
+4. If CAT → DBU, then DOG →
+   A) EPH  B) DPH  C) EPG  D) FQI
+   Answer: A
+
+5. If 2 → 4, 3 → 9, 4 → 16, then 5 →
+   A) 20  B) 25  C) 30  D) 15
+   Answer: B
+
+6. Choose the odd letters:
+   A) PQ  B) RS  C) TU  D) TV
+   Answer: D
+
+7. Find the next number: 11, 14, 17, 20, __
+   A) 22  B) 23  C) 24  D) 25
+   Answer: B
+
+8. If NORTH = 12345, SOUTH = 67845, then NO =
+   A) 12  B) 17  C) 18  D) 67
+   Answer: A
+
+9. Odd one out:
+   A) Lion  B) Tiger  C) Leopard  D) Cow
+   Answer: D
+
+10. Complete the analogy: Pen : Write :: Knife : __
+    A) Cut  B) Sharp  C) Break  D) Point
+    Answer: A
+
+11. Series: 1, 2, 4, 7, 11, __
+    A) 15  B) 16  C) 17  D) 18
+    Answer: A
+
+12. Opposite direction of East:
+    A) West  B) North  C) South  D) None
+    Answer: A
+
+13. If A = 1, Z = 26, then J =
+    A) 9  B) 10  C) 11  D) 8
+    Answer: B
+
+14. Which shape has 3 sides?
+    A) Triangle  B) Square  C) Pentagon  D) Hexagon
+    Answer: A
+
+15. Find missing letter: A, C, E, G, __
+    A) H  B) I  C) J  D) K
+    Answer: C
+
+16. Which number completes: 2, 5, 10, 17, __
+    A) 26  B) 22  C) 27  D) 28
+    Answer: A
+
+17. Mirror of E is:
+    A) Ǝ  B) 3  C) E  D) C
+    Answer: A
+
+18. Odd one out:
+    A) Square  B) Circle  C) Triangle  D) Rectangle
+    Answer: B
+
+19. If all roses are flowers, and some flowers fade. Which is true?
+    A) Some roses fade
+    B) All roses fade
+    C) No rose fades
+    D) None
+    Answer: A
+
+20. If 6 → 8, 4 → 6, 8 → 10, then 10 →
+    A) 12  B) 11  C) 13  D) 15
+    Answer: A
+
+21. Complete: ACE, BDF, CGH, __
+    A) DIJ  B) EIJ  C) DHI  D) DFH
+    Answer: A
+
+22. Number opposite 3 on a dice if opposite sides sum to 7:
+    A) 4  B) 5  C) 6  D) 2
+    Answer: C
+
+23. Find the odd one:
+    A) 121  B) 144  C) 169  D) 125
+    Answer: D
+
+24. Pick the related pair: Hot : Cold :: Big : __
+    A) Small  B) Tiny  C) Huge  D) Soft
+    Answer: A
+
+25. If P is taller than Q and Q taller than R, who is shortest?
+    A) P  B) Q  C) R  D) Cannot say
+    Answer: C
+
+26. Next in: 5, 15, 30, 50, __
+    A) 75  B) 80  C) 65  D) 60
+    Answer: B
+
+27. Choose odd:
+    A) Ear  B) Eye  C) Nose  D) Heart
+    Answer: D
+
+28. MANGO coded as NAMGO then APPLE coded as
+    A) PAPLE  B) APPEL  C) APLPE  D) PAPLE
+    Answer: B
+
+29. 6, 11, 21, 36, __
+    A) 56  B) 60  C) 66  D) 72
+    Answer: A
+
+30. Find missing: 4, 9, 19, 39, __
+    A) 79  B) 80  C) 81  D) 82
+    Answer: A
+
+31. If BLUE = 25, GREEN = 42 then RED =
+    A) 18  B) 20  C) 15  D) 16
+    Answer: D
+
+32. Odd one:
+    A) 2  B) 3  C) 5  D) 9
+    Answer: D
+
+33. If NORTH becomes PORUI, then EAST becomes
+    A) FBVT  B) FBTU  C) EBST  D) FBSU
+    Answer: A
+
+34. Which diagram: Students, Boys, Athletes?
+    A) Three overlapping circles
+    B) Two nested, one outside
+    C) Three separate
+    D) One inside another
+    Answer: A
+
+35. Complete series: 2, 8, 18, 32, __
+    A) 48  B) 50  C) 52  D) 60
+    Answer: A
+
+36. Odd one:
+    A) Inch  B) Meter  C) Yard  D) Liter
+    Answer: D
+
+37. Missing: J, F, M, A, M, __
+    A) J  B) K  C) N  D) A
+    Answer: A
+
+38. Which is heavier?
+    A) 1 kg iron
+    B) 1 kg cotton
+    C) Both same
+    D) Can't be determined
+    Answer: C
+
+39. 14, 28, 56, __
+    A) 72  B) 84  C) 100  D) 112
+    Answer: D
+
+40. If LIFT = KHEQ, then MILK =
+    A) LHKJ  B) LHKJ  C) LHLJ  D) LHKL
+    Answer: A
+
+---
+
+# **INTERMEDIATE (30)**
+
+41. A is mother of B, B is brother of C, C is father of D. A is to D:
+    A) Mother
+    B) Grandmother
+    C) Aunt
+    D) Sister
+    Answer: B
+
+42. Direction: A walks 5 km south, 3 km east, 2 km north. Position?
+    A) NW  B) SE  C) NE  D) SW
+    Answer: B
+
+43. Series: 7, 14, 28, 56, __
+    A) 84  B) 96  C) 112  D) 128
+    Answer: C
+
+44. Analogy: Doctor : Hospital :: Teacher : __
+    A) School  B) Book  C) Home  D) Class
+    Answer: A
+
+45. If ALL = 24, BOY = 42 then CAT =
+    A) 24  B) 26  C) 30  D) 36
+    Answer: B
+
+46. Seating: A sits right of B, C sits left of B. Who sits between?
+    A) A  B) B  C) C  D) Cannot say
+    Answer: B
+
+47. Code: TREE → USFF, then BOOK →
+    A) CPLL  B) CQMJ  C) CPNL  D) CPLL
+    Answer: A
+
+48. Find missing: 15, 31, 63, 127, __
+    A) 255  B) 197  C) 200  D) 300
+    Answer: A
+
+49. Blood relation: A’s son is B’s brother. B is C’s mother. A is C’s
+    A) Father  B) Mother  C) Uncle  D) Grandparent
+    Answer: D
+
+50. Non-verbal: A square turns into a triangle then circle. Next?
+    A) Square  B) Triangle  C) Circle  D) Dot
+    Answer: A
+
+51. Find odd:
+    A) 24  B) 28  C) 32  D) 36
+    Answer: D
+
+52. If RAM = 36, FAN = 21, HAT = __
+    A) 29  B) 30  C) 31  D) 24
+    Answer: C
+
+53. 5 persons in a line. A ahead of B but behind C. D at end. Who is second?
+    A) A  B) B  C) C  D) D
+    Answer: A
+
+54. Complete: AB, CD, EF, GH, __
+    A) IJ  B) KL  C) MN  D) OP
+    Answer: A
+
+55. Series: 9, 27, 81, __
+    A) 162  B) 243  C) 324  D) 400
+    Answer: B
+
+56. Puzzle: One coin fake is lighter. How to detect?
+    A) weighing in two steps
+    B) weighing in three steps
+    C) one step
+    D) zero
+    Answer: B
+
+57. If MONDAY = 123456, TUESDAY =
+    A) 789123
+    B) 123789
+    C) 456789
+    D) 345678
+    Answer: D
+
+58. Find relation: 18 → 81, 27 → 72, 45 → __
+    A) 54  B) 56  C) 64  D) 65
+    Answer: A
+
+59. Directions: Face north, turn right, right, left. Now facing:
+    A) East  B) West  C) South  D) North
+    Answer: B
+
+60. 3 couples sit in a line, husbands must sit together. Total ways:
+    A) 48  B) 72  C) 96  D) 120
+    Answer: B
+
+61. Find odd:
+    A) AB12  B) CD23  C) EF45  D) GH78
+    Answer: C
+
+62. Which shape completes pattern?
+    A) A
+    B) B
+    C) C
+    D) D
+    Answer: C
+
+63. Analogy: Water : Liquid :: Ice : __
+    A) Gas  B) Solid  C) Hard  D) Cold
+    Answer: B
+
+64. If P means ×, Q means ÷, R means +, then 6 R 4 Q 2 P 3 =
+    A) 9  B) 12  C) 15  D) 18
+    Answer: C
+
+65. If 2 cats catch 2 mice in 2 minutes, 100 cats catch 100 mice in:
+    A) 1  B) 2  C) 50  D) 100
+    Answer: B
+
+66. Series: 3, 8, 15, 24, 35, __
+    A) 48  B) 49  C) 50  D) 52
+    Answer: A
+
+---
+
+# **ADVANCED (30)**
+
+71. Puzzle: A speaks truth on Mon/Tue, lies on others. He says “I lied yesterday.” Day?
+    A) Monday  B) Tuesday  C) Wednesday  D) Thursday
+    Answer: B
+
+72. Arrangement: 6 people in circle, X opposite Y, Z right of X. Who is left of Y?
+    A) Z  B) X  C) W  D) Cannot say
+    Answer: A
+
+73. If * means +, / means –, + means ×, – means ÷, then 6 * 4 + 3 – 1 / 2 =
+    A) 10  B) 9  C) 8  D) 7
+    Answer: C
+
+74. Series: 2, 12, 36, 80, __
+    A) 140  B) 150  C) 156  D) 170
+    Answer: C
+
+75. Blood relation: A says “He is son of my father’s sister.” Relation to A:
+    A) Brother
+    B) Cousin
+    C) Uncle
+    D) Nephew
+    Answer: B
+
+76. Matrix decoding required:
+    A) 24
+    B) 32
+    C) 40
+    D) 48
+    Answer: D
+
+77. Logic: All rings are circles, some circles are wheels, some wheels are round. Conclusion?
+    A) Some rings are round
+    B) All rings are round
+    C) Some wheels are rings
+    D) Cannot be determined
+    Answer: D
+
+78. 1, 4, 13, 40, 121, __
+    A) 364  B) 360  C) 362  D) 365
+    Answer: A
+
+79. Puzzle: 5 people, 3 statements true. Who lied?
+    A) A
+    B) B
+    C) C
+    D) D
+    Answer: C
+
+80. Chessboard squares count:
+    A) 64
+    B) 204
+    C) 240
+    D) 256
+    Answer: B
+
+81. Sequence: AB, CDE, FGHI, __
+    A) JKLMN
+    B) JKLM
+    C) JKL
+    D) JKMN
+    Answer: A
+
+82. If TODAY = 65, TOMORROW =
+    A) 98
+    B) 100
+    C) 102
+    D) 110
+    Answer: C
+
+83. Puzzle: A says B is lying, B says A is lying. Who lies?
+    A) A
+    B) B
+    C) Both
+    D) None
+    Answer: C
+
+84. Code: 9 → 81, 8 → 64, 12 → 144, 15 →
+    A) 225
+    B) 230
+    C) 240
+    D) 250
+    Answer: A
+
+85. Directions: Start south, turn left, left, right, right. End facing:
+    A) North
+    B) South
+    C) East
+    D) West
+    Answer: B
+
+86. Set theory: 30 students know cricket, 20 football, 10 both. Total min:
+    A) 20
+    B) 30
+    C) 40
+    D) 50
+    Answer: C
+
+87. Pattern: 121, 144, 169, 196, __
+    A) 215
+    B) 225
+    C) 245
+    D) 256
+    Answer: B
+
+88. Series: 1, 3, 9, 27, 81, 243, __
+    A) 486
+    B) 720
+    C) 729
+    D) 900
+    Answer: C
+
+89. Seating: 7 people, A between B & C. D right of C. Who is left of A?
+    A) B
+    B) C
+    C) D
+    D) Cannot say
+    Answer: A
+
+90. If 2 stands for 8, 3 stands for 27, 4 stands for 64, then 6 stands for
+    A) 216
+    B) 224
+    C) 232
+    D) 256
+    Answer: A
+
+91. 3-digit number puzzle. Clue-based deduction. Number is:
+    A) 128
+    B) 238
+    C) 258
+    D) 278
+    Answer: C
+
+92. Odd one:
+    A) Pentagon
+    B) Hexagon
+    C) Heptagon
+    D) Circle
+    Answer: D
+
+93. Pattern: 5, 10, 20, 40, __
+    A) 50
+    B) 60
+    C) 70
+    D) 80
+    Answer: D
+
+94. People shaking hands problem. If 10 people meet, handshakes:
+    A) 40
+    B) 45
+    C) 50
+    D) 90
+    Answer: B
+
+95. Letters: A1, C3, E5, G7, __
+    A) H8
+    B) I9
+    C) J11
+    D) K13
+    Answer: B
+
+96. Puzzle: 4 coins toss. Probability of exactly two heads:
+    A) 3/8
+    B) 6/16
+    C) 3/16
+    D) 6/16
+    Answer: D
+
+97. Sudoku-style missing number:
+    A) 14
+    B) 15
+    C) 16
+    D) 18
+    Answer: C
+
+98. Mixed series: 10, 21, 43, 87, __
+    A) 174
+    B) 176
+    C) 178
+    D) 180
+    Answer: A
+
+99. Seating: 8 people around circle. Opposite of A is E. B sits to right of A. Who is left of E?
+    A) C
+    B) D
+    C) F
+    D) G
+    Answer: C
+
+100. Cube painted all sides then cut into 64 cubes. How many have exactly 2 painted faces?
+     A) 12
+     B) 24
+     C) 32
+     D) 48
+     Answer: B

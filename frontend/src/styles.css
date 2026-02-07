@@ -1,0 +1,140 @@
+@import "tailwindcss";
+
+@theme {
+  /* Neubrutalism Black & White Theme */
+  --color-background: 0 0% 100%;
+  --color-foreground: 0 0% 0%;
+  --color-primary: 0 0% 0%;
+  --color-primary-foreground: 0 0% 100%;
+  --color-secondary: 0 0% 95%;
+  --color-secondary-foreground: 0 0% 0%;
+  --color-muted: 0 0% 90%;
+  --color-muted-foreground: 0 0% 40%;
+  --color-accent: 0 0% 0%;
+  --color-accent-foreground: 0 0% 100%;
+  --color-destructive: 0 84% 60%;
+  --color-destructive-foreground: 0 0% 100%;
+  --color-border: 0 0% 0%;
+  --color-input: 0 0% 100%;
+  --color-ring: 0 0% 0%;
+  --color-card: 0 0% 100%;
+  --color-card-foreground: 0 0% 0%;
+  --color-popover: 0 0% 100%;
+  --color-popover-foreground: 0 0% 0%;
+  --radius: 0px; /* Sharp corners for brutalism */
+}
+
+/* Neubrutalism Global Styles */
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root { 
+  height: 100%; 
+}
+
+body {
+  font-family: 'Courier New', monospace;
+  background: white;
+  color: black;
+  margin: 0;
+}
+
+/* Neubrutalism Shadow Utilities */
+.brutal-shadow {
+  box-shadow: 4px 4px 0px 0px black;
+}
+
+.brutal-shadow-lg {
+  box-shadow: 8px 8px 0px 0px black;
+}
+
+.brutal-shadow-xl {
+  box-shadow: 12px 12px 0px 0px black;
+}
+
+.brutal-border {
+  border: 3px solid black;
+}
+
+.brutal-border-thick {
+  border: 5px solid black;
+}
+
+.brutal-border-b-3 {
+  border-bottom: 3px solid black;
+}
+
+/* Neubrutalism Button Styles */
+.brutal-btn {
+  border: 3px solid black;
+  background: white;
+  color: black;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.1s ease;
+  box-shadow: 4px 4px 0px 0px black;
+}
+
+.brutal-btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px black;
+}
+
+.brutal-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px 0px black;
+}
+
+.brutal-btn-primary {
+  background: black;
+  color: white;
+}
+
+.brutal-btn-primary:hover {
+  background: black;
+  color: white;
+}
+
+/* Neubrutalism Card Styles */
+.brutal-card {
+  border: 3px solid black;
+  background: white;
+  box-shadow: 8px 8px 0px 0px black;
+}
+
+/* Neubrutalism Input Styles */
+.brutal-input {
+  border: 3px solid black;
+  background: white;
+  color: black;
+  box-shadow: 4px 4px 0px 0px black;
+}
+
+.brutal-input:focus {
+  outline: none;
+  box-shadow: 6px 6px 0px 0px black;
+}
+
+/* Progress Bar */
+.brutal-progress {
+  border: 3px solid black;
+  background: white;
+  box-shadow: 4px 4px 0px 0px black;
+}
+
+.brutal-progress-bar {
+  background: black;
+  transition: width 0.3s ease;
+}
+
+/* Animations */
+@keyframes brutal-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.brutal-bounce {
+  animation: brutal-bounce 2s infinite;
+}
