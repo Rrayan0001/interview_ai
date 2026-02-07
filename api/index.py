@@ -9,13 +9,6 @@ if result_path not in sys.path:
 
 from backend.api import app
 
-# Vercel needs 'app' to be exposed
-# But for serverless function strict compat, we use Mangum if needed, 
-# or Vercel's python runtime can handle FastAPI directly if we expose 'app'.
-# However, for advanced features like streaming, Mangum is safer.
-try:
-    from mangum import Mangum
-    handler = Mangum(app, lifespan="off")
-except ImportError:
-    # Fallback if Mangum not present (though it should be in requirements.txt)
-    handler = app
+# Vercel supports FastAPI/ASGI natively. 
+# We just need to expose the 'app' object.
+handler = app
