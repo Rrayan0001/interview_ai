@@ -19,7 +19,10 @@ try:
 except ImportError:
     pass
 
-app = FastAPI()
+app = FastAPI(
+    title="AI Interview Bot API",
+    root_path="/api" if os.environ.get("VERCEL") else ""
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
