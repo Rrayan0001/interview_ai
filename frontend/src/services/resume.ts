@@ -1,14 +1,10 @@
-// Get backend URL - use Railway in production, localhost in dev
+// Get backend URL
 const getApiUrl = () => {
-  const envUrl = import.meta.env.VITE_BACKEND_URL as string | undefined;
+  // In Vercel, use relative path to hit the serverless function
   if (import.meta.env.PROD) {
-    // Force Railway if env var is missing or points to localhost
-    if (!envUrl || envUrl.includes("localhost")) {
-      return "https://web-production-dad96.up.railway.app";
-    }
-    return envUrl;
+    return "/api";
   }
-  return envUrl || "http://localhost:8000";
+  return import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
 };
 
 const API_URL = getApiUrl();
